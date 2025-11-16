@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Árbol Cristalino</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <!-- Spacer para permitir scroll vertical (se refuerza desde JS también) -->
+  <div id="scroll-spacer" aria-hidden="true"></div>
+
+  <!-- Lienzo principal Three.js -->
+  <canvas class="experience-canvas"></canvas>
+
+  <!-- SCROLLBAR PERSONALIZADO -->
+  <div class="custom-scrollbar">
+    <div class="custom-scrollbar-thumb"></div>
+  </div>
+
+  <!-- INDICADOR DE SCROLL · PANTALLA DE BIENVENIDA -->
+  <div class="scroll-prompt" id="scroll-prompt">
+    <div class="scroll-prompt-line">
+      <div class="scroll-prompt-dot"></div>
+    </div>
+    <div class="scroll-prompt-label">Scroll to explore</div>
+  </div>
+
+  <!-- SECCIONES CINEMÁTICAS OVERLAY (DOM) -->
+  <div class="sections-container" aria-hidden="true">
+    <!-- Sección 0 · Raíces -->
+    <article class="section-card section-card--roots" data-section="0">
+      <header class="section-card-header">
+        <span class="section-label">Sección 01 · Raíces</span>
+        <h2 class="section-title">Formación & Fundamentos</h2>
+      </header>
+      <p class="section-lead">
+        Las raíces del árbol cristalino conectan mi trayectoria en gastronomía de alto nivel con el
+        diseño de experiencias digitales e interactivas.
+      </p>
+      <div class="section-grid">
+        <div class="section-col">
+          <h3 class="section-subtitle">Interacción Digital & Multimedia</h3>
+          <ul class="section-list">
+            <li>Grado UOC · Técnicas de Interacción Digital y Multimedia</li>
+            <li>Diseño de interfaces, UX y narrativa interactiva</li>
+            <li>Three.js, WebGL, prototipado, realidad mixta, AR/VR</li>
+          </ul>
+        </div>
+        <div class="section-col">
+          <h3 class="section-subtitle">Cocina como lenguaje</h3>
+          <ul class="section-list">
+            <li>Más de una década liderando cocinas creativas</li>
+            <li>Conceptos propios, I+D, menús degustación, storytelling gastronómico</li>
+            <li>La cocina como sistema: datos, procesos, experiencia de usuario</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- Sección 1 · Ramas -->
+    <article class="section-card section-card--branches" data-section="1">
+      <header class="section-card-header">
+        <span class="section-label">Sección 02 · Ramas</span>
+        <h2 class="section-title">Proyectos Interactivos</h2>
+      </header>
+      <p class="section-lead">
+        Las ramas son los proyectos donde mezclo arte, tecnología y narrativa: desde webs inmersivas
+        hasta datos convertidos en experiencias visuales.
+      </p>
+      <div class="section-grid">
+        <div class="section-col">
+          <h3 class="section-subtitle">Aplicaciones Interactivas</h3>
+          <ul class="section-list">
+            <li>Experiencias 3D con Three.js y WebGL</li>
+            <li>Prototipos de AR/VR y realidad mixta</li>
+            <li>Interfaces para contar historias con scroll, cámara y luz</li>
+          </ul>
+        </div>
+        <div class="section-col">
+          <h3 class="section-subtitle">Datos & Visualización</h3>
+          <ul class="section-list">
+            <li>Dashboards y visualizaciones para negocios reales</li>
+            <li>Análisis de ventas, segmentación de clientes, storytelling con datos</li>
+            <li>Data + diseño como una sola disciplina creativa</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- Sección 2 · Copa -->
+    <article class="section-card section-card--crown" data-section="2">
+      <header class="section-card-header">
+        <span class="section-label">Sección 03 · Copa</span>
+        <h2 class="section-title">Visión & Futuro</h2>
+      </header>
+      <p class="section-lead">
+        La copa del árbol representa hacia dónde evoluciona mi trabajo: experiencias inmersivas que
+        conectan personas, datos, espacios físicos y mundos digitales.
+      </p>
+      <div class="section-grid">
+        <div class="section-col">
+          <h3 class="section-subtitle">Dirección Creativa & Producto</h3>
+          <ul class="section-list">
+            <li>Diseño de conceptos interactivos de alto impacto</li>
+            <li>Estrategia de producto basada en experiencia de usuario</li>
+            <li>Exploración de nuevos formatos inmersivos</li>
+          </ul>
+        </div>
+        <div class="section-col">
+          <h3 class="section-subtitle">Ejes de futuro</h3>
+          <ul class="section-list">
+            <li>Experiencias web inmersivas para marcas y espacios</li>
+            <li>Integrar gastronomía, arte y tecnología en nuevos contextos</li>
+            <li>Seguir elevando el nivel técnico y conceptual del portfolio</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <!-- UI PRINCIPAL (título fijo) -->
+  <div class="ui-container is-hidden">
+    <div class="title-container">
+      <span class="title">Árbol Cristalino</span>
+      <span class="subtitle">Portfolio Interactivo</span>
+    </div>
+  </div>
+
+  <!-- BOTÓN MUTE -->
+  <button id="mute-btn" class="mute-btn muted" aria-label="Activar / desactivar audio ambiental">
+    <svg class="mute-icon" viewBox="0 0 64 64" aria-hidden="true">
+      <!-- OFF: línea recta, larga -->
+      <path class="audio-line-off" d="M8 32 H56" />
+      <!-- ON: onda suave con picos redondeados y vivos -->
+      <path
+        class="audio-line-on"
+        d="
+          M8 32
+          C14 18, 22 46, 28 32
+          C34 18, 42 46, 48 32
+          C54 18, 58 46, 56 32
+        "
+      />
+    </svg>
+  </button>
+
+  <div id="tooltip" role="tooltip" aria-hidden="true"></div>
+
+  <script type="module" src="/src/script.js"></script>
+</body>
+</html>
