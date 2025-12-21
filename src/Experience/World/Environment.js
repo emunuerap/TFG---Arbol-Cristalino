@@ -14,6 +14,8 @@ export default class Environment {
     this.setBackgroundAndReflections()
     this.setLights()
     this.setFog()
+
+    this.updateLight(0)
   }
 
   setBackgroundAndReflections() {
@@ -55,8 +57,8 @@ export default class Environment {
   }
 
   setFog() {
-    this.scene.fog = new THREE.FogExp2(0x000000, 0.03)
-  }
+    this.scene.fog = new THREE.FogExp2(new THREE.Color('#001a33'), 0.04)
+    }
 
   // Versión básica: asignación directa por sección
   updateLight(sectionId) {

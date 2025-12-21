@@ -4,51 +4,101 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Árbol Cristalino</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Flip.min.js"></script>
+
+
+  <!-- Hoja de estilos principal del proyecto -->
   <link rel="stylesheet" href="/style.css" />
 </head>
+
 <body>
-  <!-- Spacer para permitir scroll vertical (se refuerza desde JS también) -->
+  <!--
+    SCROLL SPACER
+    --------------------------------------------------
+    Este div sirve para generar espacio vertical extra
+    de forma que la página tenga scroll suficiente
+    para activar la experiencia basada en scroll.
+    El tamaño real se ajusta desde JS.
+  -->
   <div id="scroll-spacer" aria-hidden="true"></div>
 
-  <!-- Lienzo principal Three.js -->
+  <!--
+    LIENZO PRINCIPAL THREE.JS
+    --------------------------------------------------
+    Canvas donde se monta la escena 3D del "Árbol Cristalino".
+    Toda la lógica de Three.js se carga desde /src/Experience.
+  -->
   <canvas class="experience-canvas"></canvas>
 
-  <!-- SCROLLBAR PERSONALIZADO -->
+  <!--
+    SCROLLBAR PERSONALIZADO
+    --------------------------------------------------
+    Barra de scroll minimalista que refleja de forma visual
+    el progreso de la experiencia. El pulgar se mueve en base
+    al scroll real de la página.
+  -->
   <div class="custom-scrollbar">
     <div class="custom-scrollbar-thumb"></div>
   </div>
 
-  <!-- INDICADOR DE SCROLL · PANTALLA DE BIENVENIDA -->
-  <div class="scroll-prompt" id="scroll-prompt">
+  <!--
+    INDICADOR DE SCROLL / PANTALLA DE BIENVENIDA
+    --------------------------------------------------
+    Mensaje inicial "Scroll to explore" con una línea vertical
+    y punto animado. Sirve de guía para indicar que la interacción
+    principal es hacer scroll.
+  -->
+  <div class="scroll-prompt hidden" id="scroll-prompt">
     <div class="scroll-prompt-line">
       <div class="scroll-prompt-dot"></div>
     </div>
     <div class="scroll-prompt-label">Scroll to explore</div>
   </div>
 
-  <!-- SECCIONES CINEMÁTICAS OVERLAY (DOM) -->
-  <div class="sections-container" aria-hidden="true">
-    <!-- Sección 0 · Raíces -->
+  <!--
+    CONTENEDOR DE SECCIONES CINEMÁTICAS (OVERLAY DOM)
+    --------------------------------------------------
+    Estas tarjetas están sincronizadas con el recorrido
+    de la cámara 3D. No desplazan contenido, sino que
+    acompañan visualmente la escena, como HUD narrativo.
+  -->
+  <div class="sections-container is-interactive">
+
+    <!--
+      SECCIÓN 0 · RAÍCES
+      ------------------------------------------------
+      Explica la base de mi perfil: formación en interacción
+      digital y trayectoria en cocina. Tiene un CTA que
+      activa la vista inmersiva de “Raíces” en la escena 3D.
+    -->
     <article class="section-card section-card--roots" data-section="0">
       <header class="section-card-header">
         <span class="section-label">Sección 01 · Raíces</span>
-        <h2 class="section-title">Formación & Fundamentos</h2>
+        <h2 class="section-title">Formación &amp; Fundamentos</h2>
       </header>
+
       <p class="section-lead">
-        Las raíces del árbol cristalino conectan mi trayectoria en gastronomía de alto nivel con el
-        diseño de experiencias digitales e interactivas.
+        Las raíces del árbol cristalino conectan mi trayectoria en gastronomía de alto nivel
+        con el diseño de experiencias digitales e interactivas.
       </p>
+
       <div class="section-grid">
+        <!-- Columna: Interacción Digital -->
         <div class="section-col">
-          <h3 class="section-subtitle">Interacción Digital & Multimedia</h3>
+          <h3 class="section-subtitle" data-pill="digital">Interacción Digital &amp; Multimedia</h3>
           <ul class="section-list">
             <li>Grado UOC · Técnicas de Interacción Digital y Multimedia</li>
             <li>Diseño de interfaces, UX y narrativa interactiva</li>
             <li>Three.js, WebGL, prototipado, realidad mixta, AR/VR</li>
           </ul>
         </div>
+
+        <!-- Columna: Gastronomía -->
         <div class="section-col">
-          <h3 class="section-subtitle">Cocina como lenguaje</h3>
+          <h3 class="section-subtitle" data-pill="gastro">Cocina como lenguaje</h3>
           <ul class="section-list">
             <li>Más de una década liderando cocinas creativas</li>
             <li>Conceptos propios, I+D, menús degustación, storytelling gastronómico</li>
@@ -56,18 +106,33 @@
           </ul>
         </div>
       </div>
+
+      <!-- CTA: entrar en la sección inmersiva de Raíces -->
+      <div class="section-cta">
+        <button class="section-enter-btn section-enter-button" data-section="0">
+          <span>Entrar en las raíces</span>
+        </button>
+      </div>
     </article>
 
-    <!-- Sección 1 · Ramas -->
+    <!--
+      SECCIÓN 1 · RAMAS
+      ------------------------------------------------
+      Foco en proyectos interactivos y visualización de datos.
+      El CTA activa la sección inmersiva correspondiente
+      en la escena 3D.
+    -->
     <article class="section-card section-card--branches" data-section="1">
       <header class="section-card-header">
         <span class="section-label">Sección 02 · Ramas</span>
         <h2 class="section-title">Proyectos Interactivos</h2>
       </header>
+
       <p class="section-lead">
-        Las ramas son los proyectos donde mezclo arte, tecnología y narrativa: desde webs inmersivas
-        hasta datos convertidos en experiencias visuales.
+        Las ramas son los proyectos donde mezclo arte, tecnología y narrativa:
+        desde webs inmersivas hasta datos convertidos en experiencias visuales.
       </p>
+
       <div class="section-grid">
         <div class="section-col">
           <h3 class="section-subtitle">Aplicaciones Interactivas</h3>
@@ -77,8 +142,9 @@
             <li>Interfaces para contar historias con scroll, cámara y luz</li>
           </ul>
         </div>
+
         <div class="section-col">
-          <h3 class="section-subtitle">Datos & Visualización</h3>
+          <h3 class="section-subtitle">Datos &amp; Visualización</h3>
           <ul class="section-list">
             <li>Dashboards y visualizaciones para negocios reales</li>
             <li>Análisis de ventas, segmentación de clientes, storytelling con datos</li>
@@ -86,27 +152,46 @@
           </ul>
         </div>
       </div>
+
+      <div class="section-cta">
+        <button
+          class="section-enter-button section-enter-button--branches"
+          data-section="1"
+        >
+          <span>Explorar las ramas</span>
+        </button>
+      </div>
     </article>
 
-    <!-- Sección 2 · Copa -->
+    <!--
+      SECCIÓN 2 · COPA
+      ------------------------------------------------
+      Visión a futuro y dirección creativa. Representa hacia
+      dónde se dirige tu trabajo mezclando inmersividad,
+      espacios físicos y mundos digitales.
+    -->
     <article class="section-card section-card--crown" data-section="2">
       <header class="section-card-header">
         <span class="section-label">Sección 03 · Copa</span>
-        <h2 class="section-title">Visión & Futuro</h2>
+        <h2 class="section-title">Visión &amp; Futuro</h2>
       </header>
+
       <p class="section-lead">
-        La copa del árbol representa hacia dónde evoluciona mi trabajo: experiencias inmersivas que
-        conectan personas, datos, espacios físicos y mundos digitales.
+        La copa del árbol representa hacia dónde evoluciona mi trabajo:
+        experiencias inmersivas que conectan personas, datos, espacios físicos
+        y mundos digitales.
       </p>
+
       <div class="section-grid">
         <div class="section-col">
-          <h3 class="section-subtitle">Dirección Creativa & Producto</h3>
+          <h3 class="section-subtitle">Dirección Creativa &amp; Producto</h3>
           <ul class="section-list">
             <li>Diseño de conceptos interactivos de alto impacto</li>
             <li>Estrategia de producto basada en experiencia de usuario</li>
             <li>Exploración de nuevos formatos inmersivos</li>
           </ul>
         </div>
+
         <div class="section-col">
           <h3 class="section-subtitle">Ejes de futuro</h3>
           <ul class="section-list">
@@ -116,10 +201,897 @@
           </ul>
         </div>
       </div>
+
+      <div class="section-cta">
+        <button
+          class="section-enter-button section-enter-button--crown"
+          data-section="2"
+        >
+          <span>Ascender a la copa</span>
+        </button>
+      </div>
     </article>
   </div>
 
-  <!-- UI PRINCIPAL (título fijo) -->
+  <!--
+    HUD INMERSIVO · RAÍCES
+    --------------------------------------------------
+    Bloque overlay que se muestra cuando el usuario entra
+    en la sección inmersiva de “Raíces” dentro de la escena 3D.
+    Incluye pills de categoría, timeline interactivo,
+    mapa de rutas y otros módulos de contenido.
+  -->
+  <div class="roots-immersive-hud" aria-hidden="true">
+    <!-- Cabecera principal del HUD de Raíces -->
+    <header class="roots-hud-header">
+      <span class="roots-tag">Raíces en el Mar</span>
+      <h2 class="roots-title">Fundamentos</h2>
+    </header>
+
+    <div class="roots-hud-body">
+      <!--
+        COLUMNA IZQUIERDA · PILLS / CATEGORÍAS
+        ----------------------------------------
+        Cada pill activa un panel de detalle distinto:
+        - Gastronomía
+        - Interacción Digital & XR
+        - Data & Sistemas
+      -->
+      <div class="roots-pill-column">
+        <button class="roots-pill is-active" data-root="gastronomia">
+          Gastronomía Creativa
+        </button>
+        <button class="roots-pill" data-root="interaccion">
+          Interacción Digital &amp; XR
+        </button>
+        <button class="roots-pill" data-root="sistemas">
+          Data &amp; Sistemas
+        </button>
+      </div>
+
+      <!--
+        PANEL DETALLADO · GASTRONOMÍA
+        ----------------------------------------
+        Desglose de mi perfil gastronómico, iconografía viva,
+        timeline de experiencia y enfoque de cocina como sistema.
+      -->
+      <div class="roots-detail-panel" data-root-panel="gastronomia">
+        <div class="roots-detail-scroll">
+          <!-- Cabecera del panel de Gastronomía -->
+          <header class="roots-panel-header">
+            <span class="roots-panel-tag">Raíces · Gastronomía</span>
+            <h3 class="roots-panel-title">Gastronomía creativa como lenguaje</h3>
+            <p class="roots-panel-intro">
+              Más de una década diseñando experiencias alrededor del fuego, el mar y la mesa.
+              De las barras mediterráneas a la escena nórdica, mi trabajo ha sido encontrar historias
+              que se puedan comer, beber y sentir.
+            </p>
+          </header>
+
+          <!--
+            MINI-ASSETS / ICONOS VIVOS
+            ----------------------------------------
+            Iconos SVG estilizados que representan mis “lenguajes”
+            gastronómicos: fuego, Mediterráneo, técnica japonesa, sistemas
+            y el plato como interfaz.
+          -->
+          <section class="roots-icons">
+            <h4 class="roots-icons-title">Lenguajes que atraviesan mi cocina</h4>
+            <p class="roots-icons-sub">
+              Cuatro ejes que aparecen una y otra vez en mis menús, da igual el país, el formato o el restaurante.
+            </p>
+
+            <div class="roots-icon-grid">
+              <!-- Mediterráneo & mar -->
+              <article class="roots-icon-item" data-lang="mediterraneo">
+                <div class="roots-icon-figure roots-icon-figure--leaf">
+                  <svg viewBox="0 0 40 40" aria-hidden="true">
+                    <path d="M10 30 C14 10, 26 6, 30 10 C26 22, 20 28, 10 30 Z" />
+                    <path d="M16 26 L24 14" />
+                  </svg>
+                </div>
+                <h5>Mediterráneo &amp; mar</h5>
+                <p>
+                  Aceite de oliva, cítricos, acidez fina y el mar como hilo conductor:
+                  fondos, arroces secos, caldos y verduras en su punto.
+                </p>
+              </article>
+
+              <!-- Norte & luz fría -->
+              <article class="roots-icon-item" data-lang="norte">
+                <div class="roots-icon-figure roots-icon-figure--plate">
+                  <svg viewBox="0 0 40 40" aria-hidden="true">
+                    <circle cx="20" cy="20" r="12" />
+                    <circle cx="20" cy="20" r="6" />
+                  </svg>
+                </div>
+                <h5>Norte &amp; luz fría</h5>
+                <p>
+                  Lectura nórdica del producto: acidez limpia, grasas medidas,
+                  vegetales crujientes y emplatados minimalistas.
+                </p>
+              </article>
+
+              <!-- Japón & corte -->
+              <article class="roots-icon-item" data-lang="japon">
+                <div class="roots-icon-figure roots-icon-figure--knife">
+                  <svg viewBox="0 0 40 40" aria-hidden="true">
+                    <path d="M8 30 L26 12 L30 16 L12 34 Z" />
+                    <path d="M12 34 L10 30 L8 30 Z" />
+                  </svg>
+                </div>
+                <h5>Japón &amp; corte</h5>
+                <p>
+                  Ramen, nikkei urbana, sushi plant-based y precisión de cuchillo
+                  aplicada tanto al pescado salvaje como al producto ibérico.
+                </p>
+              </article>
+
+              <!-- Fuego, brasas & fermentos -->
+              <article class="roots-icon-item" data-lang="fuego">
+                <div class="roots-icon-figure roots-icon-figure--fire">
+                  <svg viewBox="0 0 40 40" aria-hidden="true">
+                    <path
+                      d="M20 4 C16 10, 24 14, 18 20 C14 24, 16 30, 20 32 C24 30, 26 26, 24 22 C22 18, 24 14, 20 4 Z"
+                    />
+                  </svg>
+                </div>
+                <h5>Fuego, brasas &amp; fermentos</h5>
+                <p>
+                  De ELMARRANO &amp; CO a los ahumados lentos, fondos, salsas
+                  fermentadas y pickles que dan profundidad y estructura al menú.
+                </p>
+              </article>
+            </div>
+          </section>
+
+          <!--
+            CARRUSEL / GALERÍA DE PLATOS
+            ---------------------------------------
+            Placeholder para 5 conceptos/platos clave.
+            Cada card incluye imagen, título, tags y descripción.
+          -->
+          <section class="roots-gallery">
+            <div class="roots-gallery-header">
+              <h4>Platos y conceptos</h4>
+            </div>
+
+            <div class="roots-gallery-track" aria-label="Galería de platos y conceptos">
+              <!-- Card 1 -->
+              <article class="roots-gallery-card">
+                <div class="roots-gallery-img">
+                  <img src="./public/images/gastro-1.jpg" alt="Placeholder de plato 1" loading="lazy" />
+                </div>
+                <div class="roots-gallery-meta">
+                  <h5>Mar profundo</h5>
+                  <p class="roots-gallery-tags">Marisco · salinidad fina · acidez</p>
+                  <p class="roots-gallery-desc">Capas de yodo, grasa y frescor para evocar el mar en calma.</p>
+                </div>
+              </article>
+
+              <!-- Card 2 -->
+              <article class="roots-gallery-card">
+                <div class="roots-gallery-img">
+                  <img src="./public/images/gastro-2.JPG" alt="Placeholder de plato 2" loading="lazy" />
+                </div>
+                <div class="roots-gallery-meta">
+                  <h5>Fuego lento</h5>
+                  <p class="roots-gallery-tags">Braising · humo · umami</p>
+                  <p class="roots-gallery-desc">Fondos y reducciones largas con producto local y toques ahumados.</p>
+                </div>
+              </article>
+
+              <!-- Card 3 -->
+              <article class="roots-gallery-card">
+                <div class="roots-gallery-img">
+                  <img src="./public/images/gastro-3.jpg" alt="Placeholder de plato 3" loading="lazy" />
+                </div>
+                <div class="roots-gallery-meta">
+                  <h5>Frío luminoso</h5>
+                  <p class="roots-gallery-tags">Nordic · acidez limpia · vegetal</p>
+                  <p class="roots-gallery-desc">Texturas crujientes y grasas medidas inspiradas en la luz del norte.</p>
+                </div>
+              </article>
+
+              <!-- Card 4 -->
+              <article class="roots-gallery-card">
+                <div class="roots-gallery-img">
+                  <img src="./public/images/gastro-4.jpg" alt="Placeholder de plato 4" loading="lazy" />
+                </div>
+                <div class="roots-gallery-meta">
+                  <h5>Nikkei urbano</h5>
+                  <p class="roots-gallery-tags">Nikkei · mar · carbón</p>
+                  <p class="roots-gallery-desc">Bluefin, mariscos y brasas ligeras con guiños japoneses.</p>
+                </div>
+              </article>
+
+              <!-- Card 5 -->
+              <article class="roots-gallery-card">
+                <div class="roots-gallery-img">
+                  <img src="./public/images/gastro-5.jpg" alt="Placeholder de plato 5" loading="lazy" />
+                </div>
+                <div class="roots-gallery-meta">
+                  <h5>Fermentos vivos</h5>
+                  <p class="roots-gallery-tags">Fermentos · sazón · precisión</p>
+                  <p class="roots-gallery-desc">Salsas y pickles que añaden profundidad y estructura al menú.</p>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <!--
+            TIMELINE INTERACTIVO · RECORRIDO GASTRONÓMICO
+            -----------------------------------------------
+            Muestra mis etapas profesionales y geográficas
+            con paneles de contenido asociados a cada periodo.
+          -->
+          <section class="roots-timeline">
+            <h4 class="roots-timeline-label">Recorrido gastronómico</h4>
+
+            <!-- Píldoras de periodo (timeline horizontal) -->
+            <div class="roots-timeline-track">
+              <button
+                class="roots-timeline-item is-active"
+                data-period="2010-2015"
+              >
+                <span>2010–2015 · Raíces mediterráneas</span>
+              </button>
+              <button
+                class="roots-timeline-item"
+                data-period="2014-2019"
+              >
+                <span>2014–2019 · Londres &amp; Michelin</span>
+              </button>
+              <button
+                class="roots-timeline-item"
+                data-period="2019-2023"
+              >
+                <span>2019–2023 · BCN &amp; salto nórdico</span>
+              </button>
+              <button
+                class="roots-timeline-item"
+                data-period="2023-hoy"
+              >
+                <span>2023–hoy · Helsinki &amp; híbridos</span>
+              </button>
+              <div class="roots-timeline-marker" aria-hidden="true"></div>
+
+            </div>
+
+            <!-- Paneles de contenido asociados a cada periodo -->
+            <div class="roots-timeline-panels">
+              <!-- Panel 1 · 2010–2015 -->
+              <article
+                class="roots-timeline-panel is-active"
+                data-period-panel="2010-2015"
+              >
+                <h5>2010–2015 · Raíces mediterráneas · Lorca / Murcia</h5>
+                <p>
+                  Primeros años en cocina mientras estudiaba en la universidad. Servicios
+                  completos en restaurantes de producto, contacto real con el ritmo de un pase
+                  y con la gestión de equipos pequeños.
+                </p>
+                <ul>
+                  <li>Cocina mediterránea de producto, fondos, sofritos, arroces y risotti.</li>
+                  <li>Empiezo a entender la cocina como oficio, sistema y lenguaje propio.</li>
+                  <li>Cursos y formación en arroces, risottos e ingeniería de menús en Murcia.</li>
+                </ul>
+              </article>
+
+              <!-- Panel 2 · 2014–2019 -->
+              <article
+                class="roots-timeline-panel"
+                data-period-panel="2014-2019"
+              >
+                <h5>2014–2019 · Londres, 2 estrellas y viaje alpino</h5>
+                <p>
+                  Salto a Londres y al fine dining internacional: italiana rústica, francesa
+                  clásica, ramen y cocina japonesa, incluyendo el primer hotel 5★ de Nobu en
+                  Europa (Nobu Shoreditch) como Chef de Partie.
+                </p>
+                <ul>
+                  <li>
+                    Paso por <strong>Cabaña Buenavista (2*)</strong> en Murcia como Chef de Partie:
+                    menú degustación largo, precisión y ritmo Michelin.
+                  </li>
+                  <li>
+                    Etapa en <strong>EE. UU. (Bloomsburg)</strong> y después en
+                    <strong>Pitztal (Austria)</strong> como Sous / Head Chef en WNDRLX:
+                    cocina alpina + mediterránea con técnicas japonesas.
+                  </li>
+                  <li>
+                    Entiendo cómo adaptar una identidad culinaria propia a contextos muy distintos.
+                  </li>
+                </ul>
+              </article>
+
+              <!-- Panel 3 · 2019–2023 -->
+              <article
+                class="roots-timeline-panel"
+                data-period-panel="2019-2023"
+              >
+                <h5>2019–2023 · Barcelona, vegano creativo &amp; salto nórdico</h5>
+                <p>
+                  Barcelona como laboratorio: proyecto propio
+                  <strong>ELMARRANO &amp; CO</strong> (BBQ, ahumados, cerveza artesanal y producto local)
+                  y más tarde Head Chef en <strong>Roots &amp; Rolls</strong>, cocina vegana creativa con
+                  sushi plant-based, fermentos y granos alternativos.
+                </p>
+                <ul>
+                  <li>
+                    Formación en panadería creativa y <strong>masas madre</strong> en el Gremio de Panaderos
+                    de Barcelona; empieza mi obsesión por el pan como pieza central del menú.
+                  </li>
+                  <li>
+                    Llegada a Helsinki: <strong>Yes Yes Yes</strong> (vegetariano) y proyecto de apertura
+                    <strong>Callicoon Hills</strong> en Nueva York.
+                  </li>
+                  <li>
+                    La cocina se vuelve más minimalista, precisa y ligada al paisaje y la estacionalidad.
+                  </li>
+                </ul>
+              </article>
+
+              <!-- Panel 4 · 2023–hoy -->
+              <article
+                class="roots-timeline-panel"
+                data-period-panel="2023-hoy"
+              >
+                <h5>2023–hoy · Helsinki, proyectos híbridos &amp; dirección creativa</h5>
+                <p>
+                  Cruce definitivo entre cocina, producto, negocio y experiencia: Head Chef en
+                  <strong>Helsinki Distilling Company</strong>, creación de
+                  <strong>Iberikus Premium Food Co.</strong> y apertura de
+                  <strong>Otoro</strong>, barra nikkei urbana con producto salvaje ibérico.
+                </p>
+                <ul>
+                  <li>
+                    Dirección creativa y renovación total de <strong>Olkkari</strong>: cocina,
+                    proveedores, bar, arte, programación musical y ópera en sala.
+                  </li>
+                  <li>
+                    Proyecto actual en <strong>TAR (Siigur Restaurants)</strong> en una isla de Helsinki,
+                    integrando toda la experiencia previa.
+                  </li>
+                  <li>
+                    La cocina se convierte en un sistema vivo conectado con datos, UX y productos digitales.
+                  </li>
+                </ul>
+              </article>
+            </div>
+          </section>
+
+          <!--
+            MAPA INTERACTIVO DE RUTAS
+            ---------------------------------------
+            Visualiza geográficamente mi trayectoria usando un mapa
+            base SVG + puntos calculados a partir de latitud/longitud.
+            La línea que conecta nodos se genera desde script.js.
+          -->
+          <section class="roots-map">
+            <div class="roots-map-header">
+              <h4>Trayectoria Global</h4>
+              <p>Explora las ubicaciones clave de mi evolución.</p>
+            </div>
+
+            <div class="roots-map-shell">
+              <div class="roots-map-inner">
+                <!-- Imagen base del mapa mundial (proyección plana) -->
+                <img
+                  class="roots-map-base"
+                  src="/images/world_map.svg"
+                  alt=""
+                  aria-hidden="true"
+                />
+
+                <!-- SVG para las conexiones entre ciudades (path animado) -->
+                <svg class="roots-map-connections" width="100%" height="100%">
+                  <defs>
+                    <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stop-color="rgba(100,200,255,0)" />
+                      <stop offset="50%" stop-color="rgba(100,200,255,1)" />
+                      <stop offset="100%" stop-color="rgba(255,255,255,1)" />
+                    </linearGradient>
+                    <filter id="glow">
+                      <feGaussianBlur stdDeviation="2" result="blur" />
+                      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                  </defs>
+                  <path
+                    class="roots-map-path"
+                    d=""
+                    stroke="url(#lineGradient)"
+                    filter="url(#glow)"
+                  />
+                </svg>
+
+                <!-- NODOS DEL MAPA (CIUDADES) -->
+
+                <!-- Murcia / Lorca - Raíces mediterráneas -->
+                <button
+                  class="roots-map-node"
+                  data-lat="37.98"
+                  data-lon="-1.13"
+                  data-place="Murcia"
+                  data-years="2010-2017"
+                  data-role="Inicios"
+                  data-style="Mediterráneo"
+                  data-achievement="Gestión de partidas"
+                  data-order="1"
+                >
+                  <span>Murcia</span>
+                </button>
+
+                <!-- Londres - Etapa Michelin / Nobu -->
+                <button
+                  class="roots-map-node"
+                  data-offset-y="-13"
+                  data-offset-x="-2"
+                  data-lat="51.5074"
+                  data-lon="-0.1278"
+                  data-place="Londres"
+                  data-years="2014-2019"
+                  data-role="Nobu / Londres"
+                  data-style="Japonesa · Fusión"
+                  data-achievement="Estándares Michelin"
+                  data-order="2"
+                >
+                  <span>Londres</span>
+                </button>
+
+                <!-- USA genérico (Bloomsburg) -->
+                <button
+                  class="roots-map-node"
+                  data-lat="40.0"
+                  data-lon="-76.0"
+                  data-place="USA"
+                  data-years="2017"
+                  data-role="Cocina Italiana"
+                  data-style="Adaptabilidad"
+                  data-achievement="Diseño de menús"
+                  data-order="3"
+                >
+                  <span>Philadelhpia</span>
+                </button>
+
+                <!-- Austria / Pitztal · WNDRLX -->
+                <button
+                  class="roots-map-node"
+                  data-lat="47.0"
+                  data-lon="10.7"
+                  data-place="Austria"
+                  data-years="2018"
+                  data-role="WNDRLX"
+                  data-style="Alpina · Mediterránea"
+                  data-achievement="Liderazgo de equipo"
+                  data-order="4"
+                >
+                  <span>Austria</span>
+                </button>
+
+                <!-- Barcelona -->
+                <button
+                  class="roots-map-node label-top"
+                  data-offset-y="-4"
+                  data-lat="41.3851"
+                  data-lon="2.1734"
+                  data-place="Barcelona"
+                  data-years="2019"
+                  data-role="Roots &amp; Rolls"
+                  data-style="Vegano creativo"
+                  data-achievement="Menú plant-based"
+                  data-order="5"
+                >
+                  <span>BCN</span>
+                </button>
+
+                <!-- Nueva York -->
+                <button
+                  class="roots-map-node label-right"
+
+                  data-lat="40.7128"
+                  data-lon="-74.0060"
+                  data-offset-x="3"
+                  data-place="NY"
+                  data-years="2022"
+                  data-role="Consultoría"
+                  data-style="Aperturas"
+                  data-achievement="Estrategia"
+                  data-order="6"
+                >
+                  <span>NY</span>
+                </button>
+
+                <!-- Helsinki -->
+                <button
+                  class="roots-map-node"
+                  data-offset-y="-28"
+                  data-offset-x="-5"
+                  data-lat="60.1699"
+                  data-lon="24.9384"
+                  data-place="Helsinki"
+                  data-years="2021+"
+                  data-role="Dirección creativa"
+                  data-style="Creatividad · Fusión"
+                  data-achievement="Fusión Gastro+Tech"
+                  data-order="7"
+                >
+                  <span>Helsinki</span>
+                </button>
+              </div>
+
+              <!-- TARJETA FLOTANTE DE DETALLE -->
+              <div class="roots-map-floating-card">
+                <div class="map-card-header">
+                  <h5 class="roots-map-title">Ubicación</h5>
+                  <span class="roots-map-years">---</span>
+                </div>
+                <div class="map-card-body">
+                  <p class="roots-map-role">Detalle del rol</p>
+                  <p class="roots-map-style">---</p>
+                  <p class="roots-map-achievement">---</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+        <!--
+          PANEL DETALLADO · INTERACCIÓN DIGITAL & XR
+          ---------------------------------------------
+          Capas técnicas y creativas de tu perfil en diseño
+          de experiencias interactivas, web inmersiva y XR.
+        -->
+<div class="roots-detail-panel is-hidden" data-root-panel="interaccion">
+  <div class="roots-detail-scroll">
+    <!-- Cabecera del panel de Interacción Digital -->
+    <header class="roots-panel-header">
+      <span class="roots-panel-tag">Raíces · Interacción Digital &amp; XR</span>
+      <h3 class="roots-panel-title">Interacción · XR · Espacios digitales</h3>
+      <p class="roots-panel-intro">
+        Esta raíz no lista proyectos: enseña cómo pienso la interacción espacial.
+        Del código al espacio inmersivo: luz, cámara, scroll y movimiento como interfaz.
+      </p>
+    </header>
+
+    <!-- XR PILL · Digital DNA + Constelación + XR Zones -->
+    <section class="xr-pill">
+      <!-- LOADER / DIGITAL DNA -->
+      <div class="xr-loader" data-xr-stage="intro">
+        <div class="xr-loader-shell">
+          <canvas class="xr-loader-canvas"></canvas>
+        </div>
+      
+        <div class="xr-loader-meta">
+          <div class="xr-loader-meta-left">
+            <p class="xr-loader-kicker">Digital DNA</p>
+            <p class="xr-loader-title">Assembling · Eduardo Porlan</p>
+          </div>
+          <div class="xr-loader-meta-right">
+            <span class="xr-loader-tag">XR · Boot Sequence</span>
+          </div>
+        </div>
+      </div>
+      
+
+      <!-- CONTENIDO PRINCIPAL XR (aparece tras el loader) -->
+      <div class="xr-main is-hidden">
+        <header class="xr-header">
+          <div class="xr-header-left">
+            <h2>XR · Digital Interaction</h2>
+            <p>
+              Diseño experiencias donde la luz, el espacio y el movimiento son la interfaz,
+              no solo el decorado.
+            </p>
+          </div>
+          <div class="xr-header-logo">
+            <!-- Aquí luego pondrás mi logo EP/XR en SVG -->
+            <div class="xr-logo-placeholder">EP · XR</div>
+          </div>
+        </header>
+
+        <div class="xr-grid">
+          <!-- IZQUIERDA: CONSTELACIÓN -->
+          <div class="xr-grid-left">
+            <div class="xr-module xr-constellation-module">
+              <canvas class="xr-constellation-canvas"></canvas>
+              <div class="xr-constellation-info">
+                <h3 id="xr-constellation-title">Stack · XR &amp; Interacción</h3>
+                <p id="xr-constellation-description">
+                  Pasa por los nodos para ver qué papel juega cada parte en mi forma
+                  de diseñar experiencias inmersivas.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- DERECHA: XR ZONES -->
+          <div class="xr-grid-right">
+            <div class="xr-module xr-zones">
+              <h3>Zonas XR</h3>
+              <p class="xr-zones-intro">
+                Marco mental para diseñar experiencias espaciales: luz, espacio, movimiento
+                y umbrales como interfaz.
+              </p>
+
+              <div class="xr-zones-grid">
+                <button class="xr-zone" data-zone="light">
+                  <h4>Light as Interface</h4>
+                  <p>Luz y sombra como sistema de guía, estados y jerarquía.</p>
+                </button>
+                <button class="xr-zone" data-zone="space">
+                  <h4>Space as Interface</h4>
+                  <p>La posición de cámara y la profundidad marcan el recorrido.</p>
+                </button>
+                <button class="xr-zone" data-zone="motion">
+                  <h4>Motion as UI</h4>
+                  <p>Las animaciones explican qué ha cambiado, no son adorno.</p>
+                </button>
+                <button class="xr-zone" data-zone="thresholds">
+                  <h4>Thresholds</h4>
+                  <p>Diseñar cruces entre estados: portales, fades, scrolls, cambios de luz.</p>
+                </button>
+              </div>
+
+              <div class="xr-zone-detail">
+                <h4 id="xr-zone-detail-title">Elige una zona para profundizar</h4>
+                <p id="xr-zone-detail-text">
+                  Cada zona describe una forma de usar Three.js y WebGL para crear
+                  experiencias XR o pre-XR centradas en la persona.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div> <!-- .xr-grid -->
+      </div> <!-- .xr-main -->
+    </section>
+  </div>
+</div>
+
+        <!--
+          PANEL DETALLADO · DATA & SISTEMAS
+          ----------------------------------------
+          Se muestra cuando la pill de “Data & Sistemas”
+          está activa en la columna izquierda del HUD.
+        -->
+        <div class="roots-detail-panel is-hidden" data-root-panel="sistemas">
+          <div class="roots-detail-scroll">
+        
+            <header class="roots-panel-header">
+              <span class="roots-panel-tag">Raíces · Data &amp; Sistemas</span>
+              <h3 class="roots-panel-title">Los datos se comportan como materia</h3>
+            </header>
+        
+            <!--  PILL DATA SYSTEMS (namespaced) -->
+            <section class="data-systems" data-ds>
+              <div class="ds-grid">
+            
+                <div class="ds-reactor">
+                  <div class="ds-reactor-top">
+                    <div class="ds-state">
+                      <button class="ds-chip is-active" type="button" data-ds-state="raw">Raw</button>
+                      <button class="ds-chip" type="button" data-ds-state="filter">Filter</button>
+                      <button class="ds-chip" type="button" data-ds-state="flow">Flow</button>
+                    </div>
+            
+                    <div class="ds-micro" aria-live="polite">
+                      <span class="ds-micro-label" id="ds-micro-label">STATUS</span>
+                      <span class="ds-micro-desc" id="ds-micro-desc">System Idle</span>
+                    </div>
+                  </div>
+            
+                  <div class="ds-reactor-shell">
+                    <canvas class="data-reactor-canvas"></canvas>
+                    <div class="ds-zones">
+                      <div class="ds-zone" data-ds-zone="input"></div>
+                      <div class="ds-zone" data-ds-zone="processing"></div>
+                      <div class="ds-zone" data-ds-zone="output"></div>
+                    </div>
+                  </div>
+                  
+                  <p class="ds-hint">/// DRAG TO ACCELERATE · HOVER TO INSPECT ///</p>
+                </div>
+            
+                <aside class="ds-side">
+                  <div class="ds-side-header">
+                    <h4 class="ds-side-title">Data Architecture</h4>
+                    <div class="ds-status-indicator">
+                      <span class="ds-status-dot"></span> LIVE
+                    </div>
+                  </div>
+            
+                  <div class="ds-process-list">
+                    <div class="ds-process-item">
+                      <span class="ds-process-label">01. Reducción de Entropía</span>
+                      <p class="ds-process-desc">
+                        Transformar el ruido masivo en señal clara. Eliminar la redundancia conservando el significado.
+                      </p>
+                    </div>
+                    <div class="ds-process-item">
+                      <span class="ds-process-label">02. Fricción Controlada</span>
+                      <p class="ds-process-desc">
+                        Las restricciones definen el modelo. Validar esquemas y consistencia antes de procesar.
+                      </p>
+                    </div>
+                    <div class="ds-process-item">
+                      <span class="ds-process-label">03. Insights Accionables</span>
+                      <p class="ds-process-desc">
+                        La visualización no es decoración; es una herramienta para cambiar decisiones de negocio.
+                      </p>
+                    </div>
+                  </div>
+            
+                 <div class="ds-terminal" id="ds-interactive-terminal">
+  <div class="ds-term-output" id="ds-term-output">
+    <div class="ds-term-line">
+      <span class="ds-term-prompt">sys@root:~$</span> 
+      <span class="ds-text">init_sequence.sh</span>
+    </div>
+    <div class="ds-term-line">
+      <span class="ds-text" style="opacity:0.7">System ready. Type <span style="color:#fff">'help'</span> for commands.</span>
+    </div>
+  </div>
+  
+  <div class="ds-term-input-line">
+    <span class="ds-term-prompt">➜</span>
+    <input type="text" id="ds-term-input" class="ds-term-input" autocomplete="off" spellcheck="false" autofocus>
+  </div>
+</div>
+                </aside>
+            
+              </div>
+            </section>
+        
+          </div>
+        </div>
+        
+        
+      </div>
+    </div>
+  </div>
+
+
+  <!-- HUD INMERSIVO · RAMAS -->
+  <div class="branches-immersive-hud" aria-hidden="true">
+  
+    <header class="branches-hud-header">
+      <span class="branches-tag">Sección 02 · Ramas</span>
+      <div class="travel-container">
+        <div class="travel-bar"></div>
+      </div>
+    </header>
+
+    <div class="intro-sequence" id="intro-sequence">
+      <div class="intro-text">Experiencia Inmersiva</div>
+      <div class="intro-text">Exploración Interactiva</div>
+    </div>
+  
+    <div class="branch-active-info hidden" id="branch-info-container">
+      <div class="branch-kicker" id="branch-kicker">---</div>
+      <h2 class="branch-headline" id="branch-title">---</h2>
+      <p class="branch-sub" id="branch-line">---</p>
+      
+      <div class="branch-meta-row">
+        <div class="branch-tags" id="branch-tags">---</div>
+        <div class="branch-actions" id="branch-actions">
+          </div>
+      </div>
+    </div>
+  
+    <div class="nav-hint">
+      <span>Scroll to Fly</span>
+      <div class="nav-line"></div>
+    </div>
+  </div>
+
+
+
+  <div class="crown-immersive-hud">
+
+    <header class="crown-hud-header">
+      <span class="crown-tag">Sección 03 · Copa</span>
+      <div class="crown-indicator">
+        <span class="crown-status-light"></span> LIVE
+      </div>
+    </header>
+  
+    <div class="crown-body">
+  
+      <section class="crown-manifesto">
+        <h1 class="crown-lead">Ingeniería Creativa<br>y Estrategia de Datos</h1>
+        <p class="crown-sublead">
+          Teleco + Product Design.<br>
+          Sistemas sólidos, métricas claras y experiencias WebGL con intención.
+        </p>
+      </section>
+  
+      <section class="crown-pillars">
+        <div class="crown-tabs-nav">
+          <button class="crown-tab-btn is-active" data-crown-pillar="architecture">Arquitectura</button>
+          <button class="crown-tab-btn" data-crown-pillar="data">Datos</button>
+          <button class="crown-tab-btn" data-crown-pillar="product">Producto</button>
+        </div>
+  
+        <div class="crown-tab-content">
+          <article class="crown-panel is-active" data-crown-panel="architecture">
+            <h3>Sistemas que aguantan</h3>
+            <p>Diseño bases técnicas que escalan: estructura, rendimiento y deuda bajo control. Lo bonito funciona… y se mantiene.</p>
+            <div class="crown-tags">
+              <span>React</span><span>Node</span><span>Python</span><span>Clean Architecture</span>
+            </div>
+          </article>
+  
+          <article class="crown-panel" data-crown-panel="data">
+            <h3>Del dataset a la decisión</h3>
+            <p>Modelo, limpio y conecto datos para que expliquen el negocio sin ruido. Dashboards y visualizaciones que llevan a acción.</p>
+            <div class="crown-tags">
+              <span>SQL</span><span>Pandas</span><span>Power BI</span><span>Analytics</span>
+            </div>
+          </article>
+  
+          <article class="crown-panel" data-crown-panel="product">
+            <h3>Entrega con criterio</h3>
+            <p>Alineo UX, negocio y ejecución. Prototipo rápido, mido, itero y convierto el concepto en un producto usable.</p>
+            <div class="crown-tags">
+              <span>Discovery</span><span>KPIs</span><span>Experimentation</span><span>Delivery</span>
+            </div>
+          </article>
+        </div>
+      </section>
+  
+      <section class="crown-context">
+        <div class="crown-toggle-wrapper">
+          <button class="crown-toggle-btn is-active" data-crown-mode="now">STATUS</button>
+          <button class="crown-toggle-btn" data-crown-mode="next">TARGET</button>
+        </div>
+  
+        <div class="crown-context-display">
+          <article class="crown-mode-text is-active" data-crown-mode-text="now">
+            <p><strong>Freelance en Helsinki.</strong><br>Data pipelines, dashboards y experiencias 3D para producto.</p>
+          </article>
+  
+          <article class="crown-mode-text" data-crown-mode-text="next">
+            <p><strong>Equipos de producto/datos.</strong><br>Rol híbrido donde diseño e ingeniería conviven de verdad.</p>
+          </article>
+        </div>
+      </section>
+  
+      <section class="crown-footer">
+        <div class="crown-actions">
+          <button class="crown-action-btn primary" id="btn-copy-email">
+            <span>Copiar Email</span>
+            <div class="btn-success-msg">Copiado</div>
+          </button>
+  
+          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"
+             class="crown-action-btn" aria-label="Abrir LinkedIn en una nueva pestaña">LinkedIn</a>
+  
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer"
+             class="crown-action-btn" aria-label="Abrir GitHub en una nueva pestaña">GitHub</a>
+  
+          <a href="/assets/cv.pdf" download class="crown-action-btn" aria-label="Descargar CV">CV</a>
+        </div>
+  
+        <div class="crown-signature">
+          <span class="ep-logo">EP</span>
+          <span class="ep-location">Eduardo Porlan · Helsinki</span>
+        </div>
+      </section>
+  
+    </div>
+  </div>
+  
+
+
+
+  <!--
+    UI PRINCIPAL FIJA (TÍTULO + SUBTÍTULO)
+    --------------------------------------------------
+    Título del proyecto “Árbol Cristalino” que aparece como
+    overlay limpio cuando el usuario está en la experiencia
+    principal. Se muestra/oculta desde JS.
+  -->
   <div class="ui-container is-hidden">
     <div class="title-container">
       <span class="title">Árbol Cristalino</span>
@@ -127,12 +1099,22 @@
     </div>
   </div>
 
-  <!-- BOTÓN MUTE -->
-  <button id="mute-btn" class="mute-btn muted" aria-label="Activar / desactivar audio ambiental">
+  <!--
+    BOTÓN MUTE
+    --------------------------------------------------
+    Control para activar/desactivar el audio ambiental
+    de la escena 3D. El icono cambia de onda a línea
+    según el estado.
+  -->
+  <button
+    id="mute-btn"
+    class="mute-btn muted"
+    aria-label="Activar / desactivar audio ambiental"
+  >
     <svg class="mute-icon" viewBox="0 0 64 64" aria-hidden="true">
-      <!-- OFF: línea recta, larga -->
+      <!-- Estado OFF: línea recta -->
       <path class="audio-line-off" d="M8 32 H56" />
-      <!-- ON: onda suave con picos redondeados y vivos -->
+      <!-- Estado ON: onda suave -->
       <path
         class="audio-line-on"
         d="
@@ -145,8 +1127,46 @@
     </svg>
   </button>
 
+  <!--
+    BOTÓN PARA SALIR DE CUALQUIER SECCIÓN INMERSIVA
+    --------------------------------------------------
+    Permite volver al “árbol principal” (vista general)
+    desde cualquier sección 3D (Raíces, Ramas, Copa).
+  -->
+  <button
+    id="section-exit-btn"
+    class="section-exit-button"
+    aria-label="Volver al árbol principal"
+  >
+    <span>Volver al árbol</span>
+  </button>
+
+  <!--
+    TOOLTIP GENÉRICO
+    --------------------------------------------------
+    Contenedor flotante que se usa para mensajes
+    contextuales breves (hover, hints, etc.).
+  -->
   <div id="tooltip" role="tooltip" aria-hidden="true"></div>
 
+  <!--
+    SCRIPT PRINCIPAL (MÓDULO)
+    --------------------------------------------------
+    Carga la lógica de:
+    - Three.js (Experience, World, Camera, etc.)
+    - Sincronización con el scroll
+    - HUDs, timeline, mapa, galerías
+  -->
+
+  <div class="fx-tubes-cursor" aria-hidden="true">
+    <canvas id="fx-tubes-cursor"></canvas>
+    <div id="cursor-core" class="cursor-core" aria-hidden="true"></div>
+
+  </div>
+
   <script type="module" src="/src/script.js"></script>
+
+  
+  
 </body>
 </html>

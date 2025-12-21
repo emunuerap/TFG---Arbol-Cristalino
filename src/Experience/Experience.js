@@ -47,6 +47,9 @@ export default class Experience {
     this.state = 'intro'
     this.transitionProgress = 0
     console.log(`Experience: Initial state = '${this.state}'`)
+    // Nuevo: modo de interacción
+this.mode = 'overview' // 'overview' | 'immersive'
+this.activeImmersiveSection = null
 
     this.audio = new Howl({
       src: ['/audio/ambient.mp3'],
@@ -58,6 +61,10 @@ export default class Experience {
     this.sizes.on('resize', this.resize.bind(this))
     this.time.on('tick', this.update.bind(this))
     this.on('start-transition', this.startMainTransition.bind(this))
+    this.on('ramas-cue', (payload) => {
+      this.world?.onRamasCue?.(payload)
+    })
+    
   }
 
   on(names, callback) {
@@ -110,6 +117,44 @@ export default class Experience {
     }, 100)
   }
 
+  enterImmersiveSection(sectionId = 0) {
+    if (this.state !== 'main') return
+    if (this.mode === 'immersive') return
+
+    this.mode = 'immersive'
+    this.activeImmersiveSection = sectionId
+
+    // Bloqueamos scroll global de la página
+    document.body.classList.add('is-immersive')
+
+    // Avisamos al mundo 3D
+    this.world?.enterImmersiveSection?.(sectionId)
+
+    // (Opcional) Gancho futuro para cámara
+    this.camera?.enterImmersiveSection?.(sectionId)
+  }
+
+  exitImmersiveSection() {
+    if (this.mode !== 'immersive') return
+
+    this.mode = 'overview'
+    this.activeImmersiveSection = null
+
+    // Restauramos scroll global
+    document.body.classList.remove('is-immersive')
+
+    // Avisamos al mundo 3D
+    this.world?.exitImmersiveSection?.()
+
+    // (Opcional) Gancho futuro para cámara
+    this.camera?.exitImmersiveSection?.()
+  }
+
+  isOverview() {
+    return this.state === 'main' && this.mode === 'overview'
+  }
+
+
   resize() {
     this.camera?.resize()
     this.renderer?.resize()
@@ -122,6 +167,7 @@ export default class Experience {
     try {
       if (this.state === 'intro') {
         this.camera.updateIntro()
+        this.world.tickShared?.() 
         this.world.intro?.update?.()
       } else if (this.state === 'main-transition') {
         const duration = 3000
@@ -134,15 +180,21 @@ export default class Experience {
         const t = 0.5 - 0.5 * Math.cos(this.transitionProgress * Math.PI)
 
         this.camera.updateTransition(t)
+        this.world.tickShared?.() 
         this.world.updateTransition?.(t)
         this.world.intro?.update?.()
 
         if (this.transitionProgress >= 1) {
           console.log('Experience: Transition complete. Entering MAIN.')
           this.state = 'main'
+
           this.world.onTransitionEnd?.()
           this.camera.reframeFromWorld?.(this.world)
           this.camera.updateMain(true)
+          this.trigger('main-ready') 
+
+
+          
         }
       } else if (this.state === 'main') {
         // Scroll + movimiento de cámara
@@ -154,7 +206,6 @@ export default class Experience {
       this.renderer.update()
     } catch (error) {
       console.error('Experience: Error in update loop:', error)
-      this.time?.stop?.()
     }
   }
 

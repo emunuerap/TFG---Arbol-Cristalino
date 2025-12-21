@@ -2,10 +2,8 @@ import * as THREE from 'three'
 import Experience from './Experience.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
-// Shaders (Strands - use the restored version from message #45 or similar)
 import strandVertex from '../shaders/introStrandVertex.glsl?raw'
 import strandFragment from '../shaders/introStrandFragment.glsl?raw'
-// Shaders for Text Particles (Use the Quantum Entanglement versions CORRECTED)
 import textParticlesVertex from '../shaders/introTextParticlesVertex.glsl?raw'
 import textParticlesFragment from '../shaders/introTextParticlesFragment.glsl?raw'
 
