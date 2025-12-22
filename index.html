@@ -1164,6 +1164,30 @@
 
   </div>
 
+  <script>
+    const btnCopy = document.getElementById('btn-copy-email');
+    const successMsg = btnCopy.querySelector('.btn-success-msg');
+  
+    btnCopy.addEventListener('click', () => {
+      // 1. El email a copiar (Corregido a .com)
+      const email = "emunueraporlan@gmail.com";
+  
+      // 2. Copiar al portapapeles
+      navigator.clipboard.writeText(email).then(() => {
+        
+        // 3. Mostrar el mensaje de "Copiado"
+        successMsg.classList.add('visible');
+  
+        // 4. Ocultarlo después de 2 segundos
+        setTimeout(() => {
+          successMsg.classList.remove('visible');
+        }, 2000);
+      }).catch(err => {
+        console.error('Error al copiar: ', err);
+      });
+    });
+  </script>
+
   <script type="module" src="/src/script.js"></script>
 
   

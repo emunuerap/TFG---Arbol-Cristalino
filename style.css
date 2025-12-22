@@ -2939,6 +2939,12 @@ body.is-section-immersive-crown .crown-immersive-hud {
   display: flex; align-items: center; justify-content: center;
   transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   font-weight: 700;
+  display: none; /* O opacity: 0; */
+}
+
+/* Cuando JS añade la clase 'visible', se muestra */
+.btn-success-msg.visible {
+  display: block; /* O opacity: 1; */
 }
 .crown-action-btn.copied .btn-success-msg { transform: translateY(0); }
 
