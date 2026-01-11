@@ -1550,6 +1550,9 @@ function bindUIEvents() {
     enterImmersiveSection(sectionIndex, 'ui')
   }
 
+  // Pointer Events (iOS/Android moderno) - muy fiable
+document.addEventListener('pointerup', handleEnter, { capture: true })
+
   // Móvil: touchend es el más fiable
   document.addEventListener('touchend', handleEnter, { capture: true, passive: false })
   // Desktop fallback
