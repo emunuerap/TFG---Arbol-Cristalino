@@ -3010,7 +3010,7 @@ body.is-section-immersive-crown .crown-body * {
      ========================= */
   
 /* HIT TESTING CORRECTO */
-.sections-container { pointer-events: none; }
+.sections-container { pointer-events: auto; }
 .section-card { pointer-events: none; }
 .section-card.is-active { pointer-events: auto; }
 .section-card.is-active * { pointer-events: auto; }
