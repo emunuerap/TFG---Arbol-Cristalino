@@ -4,6 +4,7 @@
 // ------------------------------------------------------------
 
 import * as THREE from 'three'
+import { initA11yController } from './a11yController.js';
 import Experience from './Experience/Experience.js'
 
 // XR (Raíces · Interacción)
@@ -1657,6 +1658,15 @@ function bindCleanup() {
 
 window.addEventListener('DOMContentLoaded', async () => {
   bindUIRefs()
+
+    // 3B) Reduced motion flag 
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
+    if (reduceMotion) document.body.classList.add('reduce-motion')
+  
+    // A11Y controller
+    initA11yController()
+    
+  // Crown toggles (modo oscuro / claro)
   initCrownToggles()
 
   // aseguramos que la UI arranca oculta (por si el CSS no la deja oculta)

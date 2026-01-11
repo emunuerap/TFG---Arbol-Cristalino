@@ -45,6 +45,7 @@ export default class Experience {
     }
 
     this.state = 'intro'
+    document.body.classList.add('is-intro')
     this.transitionProgress = 0
     console.log(`Experience: Initial state = '${this.state}'`)
     // Nuevo: modo de interacción
@@ -187,6 +188,7 @@ this.activeImmersiveSection = null
         if (this.transitionProgress >= 1) {
           console.log('Experience: Transition complete. Entering MAIN.')
           this.state = 'main'
+          document.body.classList.remove('is-intro')
 
           this.world.onTransitionEnd?.()
           this.camera.reframeFromWorld?.(this.world)

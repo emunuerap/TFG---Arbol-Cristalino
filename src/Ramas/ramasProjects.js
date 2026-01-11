@@ -22,7 +22,7 @@ export const RAMAS_PROJECTS = [
       tags: ['PRODUCT DESIGN', 'REAL-TIME', 'B2B/B2C'],
       tech: ['React Native', 'Node.js', 'Socket.io', 'Dashboard OS'],
       links: {
-          'web': 'https://tapin.app',
+          'demo': 'tapin-demo.vercel.app',
           'case': '#'
       }
   },
