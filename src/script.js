@@ -1518,49 +1518,54 @@ function bindScrollProgress() {
 // ------------------------------------------------------------
 
 function bindUIEvents() {
+  const pickButtonFromEvent = (event) => {
+    // Coordenadas fiables (touch/pointer)
+    const clientX = event.changedTouches?.[0]?.clientX ?? event.clientX
+    const clientY = event.changedTouches?.[0]?.clientY ?? event.clientY
+    if (clientX == null || clientY == null) return null
+
+    // Elemento REAL bajo el dedo
+    const el = document.elementFromPoint(clientX, clientY)
+    if (!el) return null
+
+    // Buscamos el botón desde ese elemento real
+    return el.closest?.('.section-enter-button') || null
+  }
+
   const handleEnter = (event) => {
-    const btn = event.target.closest?.('.section-enter-button')
+    const btn = pickButtonFromEvent(event)
     if (!btn) return
 
-    // Evita que el tap se lo coma el scroll / iOS delay
     event.preventDefault?.()
     event.stopPropagation?.()
     event.stopImmediatePropagation?.()
 
-    const raw = btn.dataset.section
-    const sectionIndex = Number(raw)
-
+    const sectionIndex = Number(btn.dataset.section)
     if (!Number.isFinite(sectionIndex)) {
-      console.warn('[ENTER BTN] data-section inválido', raw, btn)
+      console.warn('[ENTER BTN] data-section inválido:', btn.dataset.section)
       return
     }
 
-    // DEBUG (déjalo 1 minuto para comprobar)
-    console.log('[ENTER BTN] OK → section', sectionIndex)
-
+    console.log('[ENTER BTN] section:', sectionIndex)
     enterImmersiveSection(sectionIndex, 'ui')
   }
 
-  // 1) PointerUp (mejor para móvil moderno)
-  document.addEventListener('pointerup', handleEnter, true)
-
-  // 2) TouchEnd (fallback iOS)
+  // Móvil: touchend es el más fiable
   document.addEventListener('touchend', handleEnter, { capture: true, passive: false })
+  // Desktop fallback
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest?.('.section-enter-button')
+    if (!btn) return
+    e.preventDefault()
+    e.stopImmediatePropagation()
+    const sectionIndex = Number(btn.dataset.section)
+    if (!Number.isFinite(sectionIndex)) return
+    enterImmersiveSection(sectionIndex, 'ui')
+  }, true)
 
-  // Exit button
   if (ui.exitBtn) ui.exitBtn.addEventListener('click', exitImmersiveSection)
-
-  // Resize thumb
-  window.addEventListener(
-    'resize',
-    () => {
-      if (!experience || experience.state !== 'main') return
-      const t = experience.camera?.computeT?.()
-      if (typeof t === 'number') updateScrollbarThumb(t)
-    },
-    { passive: true }
-  )
 }
+
 
 // ------------------------------------------------------------
 // 15) Audio mute (con fade)

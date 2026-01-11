@@ -3009,15 +3009,12 @@ body.is-section-immersive-crown .crown-body * {
      Si esto afecta a otras secciones, lo movemos a CSS global.
      ========================= */
   
-    /* El contenedor SI debe recibir hit-testing */
-.sections-container { pointer-events: auto; }
-
-/* Solo la card activa es interactiva */
+/* HIT TESTING CORRECTO */
+.sections-container { pointer-events: none; }
 .section-card { pointer-events: none; }
 .section-card.is-active { pointer-events: auto; }
-
-/* Y dentro de la card activa, todo interactivo */
 .section-card.is-active * { pointer-events: auto; }
+
 
 
 /* =========================================================
