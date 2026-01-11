@@ -486,6 +486,7 @@ body.is-intro .experience-canvas {
     transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
     opacity 0.25s ease;
     z-index: 100 !important; /* Asegura que flote sobre decoraciones de la tarjeta */
+    touch-action: manipulation; /* reduce delay y mejora el tap */
 }
 
 .section-enter-button::before {
@@ -3008,9 +3009,16 @@ body.is-section-immersive-crown .crown-body * {
      Si esto afecta a otras secciones, lo movemos a CSS global.
      ========================= */
   
-     .sections-container { pointer-events: none; }
-     .section-card { pointer-events: none; }
-     .section-card.is-active { pointer-events: auto; }
+    /* El contenedor SI debe recibir hit-testing */
+.sections-container { pointer-events: auto; }
+
+/* Solo la card activa es interactiva */
+.section-card { pointer-events: none; }
+.section-card.is-active { pointer-events: auto; }
+
+/* Y dentro de la card activa, todo interactivo */
+.section-card.is-active * { pointer-events: auto; }
+
 
 /* =========================================================
    A11Y · MOBILE TARGETS (tap-friendly)

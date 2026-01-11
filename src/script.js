@@ -1538,6 +1538,29 @@ function bindUIEvents() {
     true
   )
 
+    // Mobile-safe: usar pointerup además de click
+    document.addEventListener(
+      'pointerup',
+      (event) => {
+        const btn = event.target.closest('.section-enter-button')
+        if (!btn) return
+  
+        // Solo “tap” real (evita drag/scroll)
+        if (event.pointerType === 'touch') {
+          event.preventDefault()
+          event.stopImmediatePropagation()
+  
+          const raw = btn.dataset.section
+          const sectionIndex = Number(raw)
+          if (!Number.isFinite(sectionIndex)) return
+  
+          enterImmersiveSection(sectionIndex, 'ui')
+        }
+      },
+      true
+    )
+  
+
   // Exit button
   if (ui.exitBtn) ui.exitBtn.addEventListener('click', exitImmersiveSection)
 
