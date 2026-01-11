@@ -486,7 +486,7 @@ body.is-intro .experience-canvas {
     transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
     opacity 0.25s ease;
     z-index: 100 !important; /* Asegura que flote sobre decoraciones de la tarjeta */
-    touch-action: manipulation; /* reduce delay y mejora el tap */
+      touch-action: manipulation; /* reduce delay y mejora el tap */
 }
 
 .section-enter-button::before {

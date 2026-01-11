@@ -1518,48 +1518,34 @@ function bindScrollProgress() {
 // ------------------------------------------------------------
 
 function bindUIEvents() {
-  // Enter buttons (un solo listener, capture, sin duplicados)
-  document.addEventListener(
-    'click',
-    (event) => {
-      const btn = event.target.closest('.section-enter-button')
-      if (!btn) return
-      event.preventDefault()
-      event.stopImmediatePropagation()
+  const handleEnter = (event) => {
+    const btn = event.target.closest?.('.section-enter-button')
+    if (!btn) return
 
-      const raw = btn.dataset.section
-      const sectionIndex = Number(raw)
-      if (!Number.isFinite(sectionIndex)) {
-        console.warn('[ENTER BTN] data-section inválido', raw, btn)
-        return
-      }
-      enterImmersiveSection(sectionIndex, 'ui')
-    },
-    true
-  )
+    // Evita que el tap se lo coma el scroll / iOS delay
+    event.preventDefault?.()
+    event.stopPropagation?.()
+    event.stopImmediatePropagation?.()
 
-    // Mobile-safe: usar pointerup además de click
-    document.addEventListener(
-      'pointerup',
-      (event) => {
-        const btn = event.target.closest('.section-enter-button')
-        if (!btn) return
-  
-        // Solo “tap” real (evita drag/scroll)
-        if (event.pointerType === 'touch') {
-          event.preventDefault()
-          event.stopImmediatePropagation()
-  
-          const raw = btn.dataset.section
-          const sectionIndex = Number(raw)
-          if (!Number.isFinite(sectionIndex)) return
-  
-          enterImmersiveSection(sectionIndex, 'ui')
-        }
-      },
-      true
-    )
-  
+    const raw = btn.dataset.section
+    const sectionIndex = Number(raw)
+
+    if (!Number.isFinite(sectionIndex)) {
+      console.warn('[ENTER BTN] data-section inválido', raw, btn)
+      return
+    }
+
+    // DEBUG (déjalo 1 minuto para comprobar)
+    console.log('[ENTER BTN] OK → section', sectionIndex)
+
+    enterImmersiveSection(sectionIndex, 'ui')
+  }
+
+  // 1) PointerUp (mejor para móvil moderno)
+  document.addEventListener('pointerup', handleEnter, true)
+
+  // 2) TouchEnd (fallback iOS)
+  document.addEventListener('touchend', handleEnter, { capture: true, passive: false })
 
   // Exit button
   if (ui.exitBtn) ui.exitBtn.addEventListener('click', exitImmersiveSection)
