@@ -5,6 +5,7 @@
 
 import * as THREE from 'three'
 import { initA11yController } from './a11yController.js';
+import { lockScrollBleed } from './scrollBleedLock.js'
 import Experience from './Experience/Experience.js'
 
 // XR (Raíces · Interacción)
@@ -1668,6 +1669,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     
   // Crown toggles (modo oscuro / claro)
   initCrownToggles()
+
+  const rootsScrollEls = document.querySelectorAll('.roots-detail-scroll')
+  rootsScrollEls.forEach((el) => lockScrollBleed(el))
+
+  const crownHud = document.querySelector('.crown-immersive-hud')
+  lockScrollBleed(crownHud)
 
   // aseguramos que la UI arranca oculta (por si el CSS no la deja oculta)
   if (ui.mainUI) {

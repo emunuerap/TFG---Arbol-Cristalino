@@ -1142,6 +1142,20 @@ body.is-section-immersive-roots .roots-immersive-hud {
   border-radius: 10px;
 }
 
+/* Evita scroll chaining donde sea soportado */
+.roots-detail-scroll,
+.crown-immersive-hud {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch; /* iOS momentum */
+}
+
+/* Asegura que el gesto táctil se interprete como scroll vertical dentro */
+.roots-detail-scroll,
+.crown-immersive-hud {
+  touch-action: pan-y;
+}
+
+
 /* Responsive roots */
 @media (max-width: 900px) {
   .roots-immersive-hud { padding: 70px 16px 20px 16px; }
