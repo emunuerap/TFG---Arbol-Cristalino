@@ -10,19 +10,26 @@
         const platform = navigator.platform || '';
         const maxTouchPoints = navigator.maxTouchPoints || 0;
   
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        const minSide = Math.min(w, h);
+  
+        const coarse = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+        const hasTouch = maxTouchPoints > 0;
+  
+        // iPadOS: a veces se presenta como "MacIntel" + touch
         const isIPad =
           /iPad/i.test(ua) ||
-          (platform === 'MacIntel' && maxTouchPoints > 1);
+          (platform === 'MacIntel' && hasTouch);
   
+        // Permitimos iPad siempre
         if (isIPad) return;
   
         const isIPhone = /iPhone|iPod/i.test(ua);
-        const isAndroid = /Android/i.test(ua);
-        const isAndroidPhone = isAndroid && /Mobile/i.test(ua);
+        const isAndroidPhone = /Android/i.test(ua) && /Mobile/i.test(ua);
   
-        const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
-        const minSide = Math.min(window.innerWidth, window.innerHeight);
-        const phoneBySize = coarse && minSide <= 760;
+        // Heurística por tamaño + input (alineamos con script.js)
+        const phoneBySize = hasTouch && coarse && minSide <= 740;
   
         if (isIPhone || isAndroidPhone || phoneBySize) {
           document.documentElement.classList.add('is-mobile-gated');
@@ -30,6 +37,7 @@
       } catch (e) {}
     })();
   </script>
+  
   
 
 

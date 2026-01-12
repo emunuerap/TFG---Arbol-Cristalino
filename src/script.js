@@ -1652,10 +1652,6 @@ function bindCleanup() {
 }
 
 // ------------------------------------------------------------
-// 17) Boot
-// ------------------------------------------------------------
-
-// ------------------------------------------------------------
 // MOBILE GATE (Phones only — allow tablets)
 // ------------------------------------------------------------
 
@@ -1676,20 +1672,19 @@ function isPhoneDevice() {
     /iPad/i.test(ua) ||
     (platform === 'MacIntel' && hasTouch)
 
-  //  Permitimos iPad siempre
+  // Permitimos iPad siempre
   if (isIPad) return false
 
-  // Phones por UA 
+  // Phones por UA
   const isIPhone = /iPhone|iPod/i.test(ua)
   const isAndroidPhone = /Android/i.test(ua) && /Mobile/i.test(ua)
 
   // Heurística por tamaño + input (para UAs raros)
-  // 740 suele separar bien "phone" vs "tablet" (incl. tablets pequeñas en portrait).
+  // 740 suele separar bien "phone" vs "tablet"
   const phoneBySize = hasTouch && coarse && minSide <= 740
 
   return isIPhone || isAndroidPhone || phoneBySize
 }
-
 
 function mountMobileGate() {
   if (document.querySelector('.mobile-gate')) return
@@ -1704,37 +1699,39 @@ function mountMobileGate() {
   gate.setAttribute('aria-label', 'Desktop / Tablet experience')
 
   gate.innerHTML = `
-  <div class="mobile-gate__card">
-    <div class="mobile-gate__header">
-      <div class="mobile-gate__kicker">ÁRBOL CRISTALINO</div>
-      <div class="mobile-gate__badge">Desktop / Tablet</div>
+    <div class="mobile-gate__card">
+      <div class="mobile-gate__header">
+        <div class="mobile-gate__kicker">ÁRBOL CRISTALINO</div>
+        <div class="mobile-gate__badge">Desktop / Tablet</div>
+      </div>
+
+      <div class="mobile-gate__visual" aria-hidden="true">
+        <canvas class="mobile-gate__canvas"></canvas>
+        <div class="mobile-gate__visualOverlay"></div>
+        <div class="mobile-gate__visualLabel">DATA · SYSTEMS</div>
+      </div>
+
+      <h2 class="mobile-gate__title">Esta experiencia no está disponible en móvil</h2>
+
+      <p class="mobile-gate__text">
+        WebGL en tiempo real, scrollytelling y HUD avanzado requieren precisión y un frame budget estable.
+        Ábrelo en ordenador o iPad/tablet para verlo como fue diseñado.
+      </p>
+
+      <div class="mobile-gate__actions">
+        <button class="mobile-gate__btn" type="button" data-copy-url>Copiar link</button>
+        <button class="mobile-gate__btn mobile-gate__btn--ghost" type="button" data-how>Cómo abrirlo</button>
+      </div>
+
+      <p class="mobile-gate__fineprint" data-fineprint>
+        Tip: envíate el link por WhatsApp/Telegram/email y ábrelo en el ordenador o en iPad/tablet.
+      </p>
     </div>
-
-    <div class="mobile-gate__visual" aria-hidden="true">
-      <canvas class="mobile-gate__canvas" width="560" height="220"></canvas>
-      <div class="mobile-gate__visualOverlay"></div>
-    </div>
-
-    <h2 class="mobile-gate__title">No disponible en móvil</h2>
-
-    <p class="mobile-gate__text">
-      Esta experiencia es 3D en tiempo real (WebGL) y está optimizada para precisión y rendimiento estable.
-    </p>
-
-    <div class="mobile-gate__actions">
-      <button class="mobile-gate__btn" type="button" data-copy-url>Copiar link</button>
-      <button class="mobile-gate__btn mobile-gate__btn--ghost" type="button" data-how>Cómo abrirlo</button>
-    </div>
-
-    <p class="mobile-gate__fineprint" data-fineprint>
-      Tip: envíate el link por WhatsApp/Telegram/email y ábrelo en el ordenador o en iPad/tablet.
-    </p>
-  </div>
-`
-
+  `
 
   document.body.appendChild(gate)
 
+  // Buttons
   const copyBtn = gate.querySelector('[data-copy-url]')
   const howBtn = gate.querySelector('[data-how]')
   const fineprint = gate.querySelector('[data-fineprint]')
@@ -1753,20 +1750,25 @@ function mountMobileGate() {
     fineprint?.classList.toggle('is-open')
   })
 
-// ------------------------------------------------------------
-// MINI VISUAL (Canvas 2D) — “WebGL-like” aura
-// Ultra ligero: no Three.js, no assets, no dependencias.
-// ------------------------------------------------------------
-const canvas = gate.querySelector('.mobile-gate__canvas')
-const ctx = canvas?.getContext('2d', { alpha: true })
+  // ------------------------------------------------------------
+  // MINI VISUAL (Canvas 2D) — DataSystems / Telemetry Panel
+  // + microdetalle: magnetic dot
+  // ------------------------------------------------------------
+  const canvas = gate.querySelector('.mobile-gate__canvas')
+  const ctx = canvas?.getContext('2d', { alpha: true })
+  if (!canvas || !ctx) return
 
-if (canvas && ctx) {
-  // Ajuste a tamaño real en CSS (HiDPI)
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v))
+  const lerp = (a, b, t) => a + (b - a) * t
+
   const fit = () => {
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
     const rect = canvas.getBoundingClientRect()
+
     canvas.width = Math.max(1, Math.floor(rect.width * dpr))
     canvas.height = Math.max(1, Math.floor(rect.height * dpr))
+
+    // dibujamos en CSS px
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
   }
 
@@ -1776,92 +1778,296 @@ if (canvas && ctx) {
   let t = 0
   let raf = 0
 
-  const rand = (x) => {
-    // hash simple determinista
-    const s = Math.sin(x) * 10000
-    return s - Math.floor(s)
+  const s = {
+    fps: 60,
+    ms: 16.7,
+    gpu: 0.42,
+    cpu: 0.33,
+    net: 0.18,
+    mem: 0.52,
+    bars: new Array(48).fill(0).map((_, i) => 0.25 + 0.15 * Math.sin(i * 0.3)),
+    logs: [
+      'INIT · Renderer ready',
+      'LOAD · Assets staged',
+      'SYNC · HUD pipeline',
+      'OK   · Await desktop',
+    ],
+  }
+
+  const pointer = { x: 0, y: 0, tx: 0, ty: 0, lastMove: 0 }
+  {
+    const r = canvas.getBoundingClientRect()
+    pointer.x = pointer.tx = r.width * 0.72
+    pointer.y = pointer.ty = r.height * 0.52
+  }
+
+  const onMove = (e) => {
+    const r = canvas.getBoundingClientRect()
+    const p = e.touches ? e.touches[0] : e
+    if (!p) return
+    pointer.tx = (p.clientX - r.left)
+    pointer.ty = (p.clientY - r.top)
+    pointer.lastMove = performance.now()
+  }
+  canvas.addEventListener('pointermove', onMove, { passive: true })
+  canvas.addEventListener('touchmove', onMove, { passive: true })
+
+  const tickTelemetry = () => {
+    const targetGpu = 0.35 + 0.25 * (0.5 + 0.5 * Math.sin(t * 0.9))
+    const targetCpu = 0.28 + 0.22 * (0.5 + 0.5 * Math.cos(t * 0.7))
+    const targetMem = 0.45 + 0.20 * (0.5 + 0.5 * Math.sin(t * 0.5 + 1.2))
+    const targetNet = 0.10 + 0.20 * (0.5 + 0.5 * Math.sin(t * 1.3 + 2.1))
+
+    s.gpu = lerp(s.gpu, targetGpu, 0.08)
+    s.cpu = lerp(s.cpu, targetCpu, 0.08)
+    s.mem = lerp(s.mem, targetMem, 0.06)
+    s.net = lerp(s.net, targetNet, 0.10)
+
+    const load = (s.gpu + s.cpu) * 0.7 + s.mem * 0.3
+    const targetMs = 12 + load * 12
+    s.ms = lerp(s.ms, targetMs, 0.10)
+    s.fps = lerp(s.fps, clamp(1000 / s.ms, 40, 60), 0.10)
+
+    s.bars.shift()
+    s.bars.push(clamp(load, 0, 1))
+
+    if (Math.floor(t * 2) % 6 === 0 && Math.random() < 0.02) {
+      const pool = [
+        'TRACE · scroll timeline locked',
+        'INFO  · phone gate active',
+        'SYNC  · input precision required',
+        'NOTE  · WebGL budget preserved',
+      ]
+      s.logs.shift()
+      s.logs.push(pool[(Math.random() * pool.length) | 0])
+    }
+  }
+
+  const drawGrid = (w, h) => {
+    ctx.save()
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)'
+    ctx.lineWidth = 1
+
+    const step = 18
+    for (let x = 0; x <= w; x += step) {
+      ctx.beginPath()
+      ctx.moveTo(x + 0.5, 0)
+      ctx.lineTo(x + 0.5, h)
+      ctx.stroke()
+    }
+    for (let y = 0; y <= h; y += step) {
+      ctx.beginPath()
+      ctx.moveTo(0, y + 0.5)
+      ctx.lineTo(w, y + 0.5)
+      ctx.stroke()
+    }
+
+    ctx.strokeStyle = 'rgba(110,207,255,0.12)'
+    ctx.beginPath()
+    ctx.moveTo(w * 0.58 + 0.5, 0)
+    ctx.lineTo(w * 0.58 + 0.5, h)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(0, h * 0.52 + 0.5)
+    ctx.lineTo(w, h * 0.52 + 0.5)
+    ctx.stroke()
+
+    ctx.restore()
+  }
+
+  const drawBars = (x, y, w, h) => {
+    ctx.save()
+    ctx.strokeStyle = 'rgba(255,255,255,0.10)'
+    ctx.strokeRect(x + 0.5, y + 0.5, w, h)
+
+    const n = s.bars.length
+    const bw = w / n
+    for (let i = 0; i < n; i++) {
+      const v = s.bars[i]
+      const bh = v * h
+      const px = x + i * bw
+      const py = y + (h - bh)
+
+      const a = 0.10 + v * 0.18
+      ctx.fillStyle = `rgba(110,207,255,${a})`
+      ctx.fillRect(px, py, bw * 0.92, bh)
+
+      ctx.fillStyle = `rgba(255,255,255,${0.03 + v * 0.06})`
+      ctx.fillRect(px, py, bw * 0.92, 1)
+    }
+    ctx.restore()
+  }
+
+  const drawWaveform = (x, y, w, h) => {
+    ctx.save()
+    ctx.beginPath()
+    for (let i = 0; i <= 90; i++) {
+      const u = i / 90
+      const px = x + u * w
+      const n1 = Math.sin(u * 9 + t * 1.8)
+      const n2 = Math.cos(u * 13 - t * 1.2) * 0.55
+      const amp = (0.35 + s.gpu * 0.45) * h
+      const py = y + h * 0.5 + (n1 + n2) * amp * 0.18
+      if (i === 0) ctx.moveTo(px, py)
+      else ctx.lineTo(px, py)
+    }
+    ctx.strokeStyle = 'rgba(210,160,255,0.22)'
+    ctx.lineWidth = 1.2
+    ctx.stroke()
+
+    ctx.globalCompositeOperation = 'lighter'
+    ctx.strokeStyle = 'rgba(110,207,255,0.10)'
+    ctx.lineWidth = 2.2
+    ctx.stroke()
+
+    ctx.restore()
+    ctx.globalCompositeOperation = 'source-over'
+  }
+
+  const drawReadouts = (x, y) => {
+    ctx.save()
+    ctx.font = '12px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
+    const line = (k, v, col) => {
+      ctx.fillStyle = col || 'rgba(235,240,255,0.78)'
+      ctx.fillText(k, x, y)
+      ctx.fillStyle = 'rgba(235,240,255,0.72)'
+      ctx.fillText(v, x + 72, y)
+      y += 16
+    }
+    line('FPS', `${Math.round(s.fps)}`, 'rgba(110,207,255,0.88)')
+    line('MS', `${s.ms.toFixed(1)}`, 'rgba(210,160,255,0.80)')
+    line('GPU', `${Math.round(s.gpu * 100)}%`)
+    line('CPU', `${Math.round(s.cpu * 100)}%`)
+    line('MEM', `${Math.round(s.mem * 100)}%`)
+    line('NET', `${Math.round(s.net * 100)}%`)
+    ctx.restore()
+  }
+
+  const drawLogs = (x, y, w) => {
+    ctx.save()
+    ctx.font = '11px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
+    for (let i = 0; i < s.logs.length; i++) {
+      const a = 0.42 + i * 0.10
+      ctx.fillStyle = `rgba(235,240,255,${a})`
+      ctx.fillText(s.logs[i], x, y + i * 14)
+    }
+    const blink = (Math.sin(t * 5) > 0.2) ? 1 : 0
+    ctx.fillStyle = `rgba(110,207,255,${0.45 * blink})`
+    ctx.fillRect(x + w - 10, y + (s.logs.length - 1) * 14 - 8, 8, 2)
+    ctx.restore()
+  }
+
+  const drawMagneticDot = (w, h) => {
+    const now = performance.now()
+    const idle = (now - pointer.lastMove) > 900
+    const anchorX = w * 0.72
+    const anchorY = h * 0.52
+
+    if (idle) {
+      pointer.tx = lerp(pointer.tx, anchorX, 0.02)
+      pointer.ty = lerp(pointer.ty, anchorY, 0.02)
+    }
+
+    pointer.x = lerp(pointer.x, pointer.tx, 0.14)
+    pointer.y = lerp(pointer.y, pointer.ty, 0.14)
+
+    ctx.save()
+    ctx.globalCompositeOperation = 'lighter'
+
+    const g1 = ctx.createRadialGradient(pointer.x, pointer.y, 0, pointer.x, pointer.y, 38)
+    g1.addColorStop(0, 'rgba(110,207,255,0.18)')
+    g1.addColorStop(0.5, 'rgba(210,160,255,0.08)')
+    g1.addColorStop(1, 'rgba(0,0,0,0)')
+    ctx.fillStyle = g1
+    ctx.fillRect(pointer.x - 60, pointer.y - 60, 120, 120)
+
+    ctx.fillStyle = 'rgba(235,240,255,0.65)'
+    ctx.beginPath()
+    ctx.arc(pointer.x, pointer.y, 2.2, 0, Math.PI * 2)
+    ctx.fill()
+
+    ctx.strokeStyle = 'rgba(110,207,255,0.28)'
+    ctx.lineWidth = 1
+    ctx.beginPath()
+    ctx.arc(pointer.x, pointer.y, 10 + 2 * Math.sin(t * 2.2), 0, Math.PI * 2)
+    ctx.stroke()
+
+    ctx.restore()
+    ctx.globalCompositeOperation = 'source-over'
   }
 
   const draw = () => {
     t += 1 / 60
-    const w = canvas.clientWidth
-    const h = canvas.clientHeight
+    tickTelemetry()
+
+    const rect = canvas.getBoundingClientRect()
+    const w = rect.width
+    const h = rect.height
 
     ctx.clearRect(0, 0, w, h)
 
-    // fondo: gradiente profundo
-    const g = ctx.createLinearGradient(0, 0, w, h)
-    g.addColorStop(0, 'rgba(10,18,32,0.92)')
-    g.addColorStop(1, 'rgba(2,6,14,0.96)')
-    ctx.fillStyle = g
+    const bg = ctx.createLinearGradient(0, 0, w, h)
+    bg.addColorStop(0, 'rgba(8,14,26,0.95)')
+    bg.addColorStop(1, 'rgba(2,6,14,0.98)')
+    ctx.fillStyle = bg
     ctx.fillRect(0, 0, w, h)
 
-    // halo central “Copa”
-    const cx = w * 0.58
-    const cy = h * 0.48
-    const r0 = Math.min(w, h) * 0.10
-    const r1 = Math.min(w, h) * 0.55
-    const halo = ctx.createRadialGradient(cx, cy, r0, cx, cy, r1)
-    halo.addColorStop(0, 'rgba(110,207,255,0.22)')
-    halo.addColorStop(0.35, 'rgba(210,160,255,0.12)')
+    const halo = ctx.createRadialGradient(w * 0.10, h * 0.15, 10, w * 0.10, h * 0.15, w * 0.9)
+    halo.addColorStop(0, 'rgba(110,207,255,0.10)')
+    halo.addColorStop(0.5, 'rgba(210,160,255,0.06)')
     halo.addColorStop(1, 'rgba(0,0,0,0)')
     ctx.fillStyle = halo
     ctx.fillRect(0, 0, w, h)
 
-    // “strands” (líneas suaves tipo shader)
-    ctx.globalCompositeOperation = 'lighter'
-    ctx.lineWidth = 1
-    for (let i = 0; i < 26; i++) {
-      const phase = i * 0.22 + t * 0.7
-      const amp = 10 + i * 0.25
-      const y0 = h * 0.20 + i * (h * 0.024)
-      ctx.beginPath()
-      for (let x = 0; x <= w; x += 14) {
-        const n = Math.sin((x * 0.008) + phase) * amp
-        const n2 = Math.cos((x * 0.013) - phase * 1.1) * (amp * 0.35)
-        const y = y0 + n + n2
-        if (x === 0) ctx.moveTo(x, y)
-        else ctx.lineTo(x, y)
-      }
-      const a = 0.06 + i * 0.002
-      ctx.strokeStyle = `rgba(110,207,255,${a})`
-      ctx.stroke()
-    }
+    drawGrid(w, h)
 
-    // scanlines muy sutiles
+    const pad = 12
+    const panelH = h - pad * 2
+    const leftW = Math.min(150, w * 0.32)
+    const rightW = w - pad * 3 - leftW
+
+    const barsX = pad * 2 + leftW
+    const barsY = pad
+    const barsW = rightW
+    const barsH = Math.max(50, panelH * 0.33)
+
+    drawBars(barsX, barsY, barsW, barsH)
+
+    const waveX = barsX
+    const waveY = barsY + barsH + 10
+    const waveW = barsW
+    const waveH = panelH - barsH - 10
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.10)'
+    ctx.strokeRect(waveX + 0.5, waveY + 0.5, waveW, waveH)
+    drawWaveform(waveX + 8, waveY + 8, waveW - 16, waveH - 16)
+
+    drawReadouts(pad, pad + 10)
+    drawLogs(pad, pad + 120, leftW - 4)
+
+    drawMagneticDot(w, h)
+
     ctx.globalCompositeOperation = 'overlay'
-    ctx.fillStyle = 'rgba(255,255,255,0.03)'
+    ctx.fillStyle = 'rgba(255,255,255,0.02)'
     for (let y = 0; y < h; y += 3) ctx.fillRect(0, y, w, 1)
-
-    // grano sutil animado (barato)
-    ctx.globalCompositeOperation = 'soft-light'
-    const dots = 160
-    for (let i = 0; i < dots; i++) {
-      const x = rand(i * 12.3 + t * 3.1) * w
-      const y = rand(i * 77.7 + t * 2.2) * h
-      ctx.fillStyle = 'rgba(255,255,255,0.025)'
-      ctx.fillRect(x, y, 1, 1)
-    }
-
     ctx.globalCompositeOperation = 'source-over'
+
     raf = requestAnimationFrame(draw)
   }
 
   raf = requestAnimationFrame(draw)
 
-  // cleanup 
   gate._mgStop = () => {
     cancelAnimationFrame(raf)
     window.removeEventListener('resize', fit)
+    canvas.removeEventListener('pointermove', onMove)
+    canvas.removeEventListener('touchmove', onMove)
   }
 }
 
-
-}
-
-
-
-
+// ------------------------------------------------------------
+// App bootstrap
+// ------------------------------------------------------------
 window.addEventListener('DOMContentLoaded', async () => {
   // HARD STOP en móvil (y también si el <head> ya marcó la clase)
   if (document.documentElement.classList.contains('is-mobile-gated') || isPhoneDevice()) {
@@ -1898,4 +2104,5 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   await initCursors()
 })
+
 
