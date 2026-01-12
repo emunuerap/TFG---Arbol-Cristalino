@@ -3094,17 +3094,41 @@ html.is-mobile-gated body{
   box-shadow:0 0 12px rgba(110,207,255,0.8);
 }
 
-.mobile-gate__footer{
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(255,255,255,0.10);
-
-  font-size: 0.72rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-
-  color: rgba(235,240,255,0.62);
-}
+/* =========================
+   SIGNATURE · EDUARDO PORLAN 
+   ========================= */
+   .mobile-gate__signature{
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(110,207,255,0.18);
+  
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  
+    color: rgba(167,217,255,0.65);
+  }
+  
+  .mobile-gate__signature .ep-logo{
+    font-weight: 800;
+    padding: 2px 5px;
+    border-radius: 2px;
+  
+    border: 1px solid rgba(110,207,255,0.55);
+    color: rgba(110,207,255,0.95);
+  
+    box-shadow: 0 0 8px rgba(110,207,255,0.25);
+  }
+  
+  .mobile-gate__signature .ep-location{
+    color: rgba(167,217,255,0.60);
+    white-space: nowrap;
+  }
+  
 
 
 

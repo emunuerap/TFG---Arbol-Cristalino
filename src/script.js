@@ -1732,9 +1732,11 @@ function mountMobileGate() {
         Tip: envíate el link por WhatsApp/Telegram/email y ábrelo en el ordenador o en iPad/tablet.
       </p>
 
-      <div class="mobile-gate__footer">
-  Eduardo Porlan · Creative Technologist · Helsinki
+      <div class="mobile-gate__signature crown-signature">
+  <span class="ep-logo">EP</span>
+  <span class="ep-location">Eduardo Porlan · Creative Technologist · Helsinki</span>
 </div>
+
 
     </div>
   `
