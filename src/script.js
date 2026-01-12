@@ -1734,7 +1734,7 @@ function mountMobileGate() {
 
       <div class="mobile-gate__signature crown-signature">
   <span class="ep-logo">EP</span>
-  <span class="ep-location">Eduardo Porlan · Creative Technologist · Helsinki</span>
+  <span class="ep-location">Eduardo Porlan · Creative Technologist</span>
 </div>
 
 
