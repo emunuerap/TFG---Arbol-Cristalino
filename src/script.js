@@ -1947,33 +1947,32 @@ function mountMobileGate() {
     ctx.restore()
   }
 
-  const drawLogs = (x, y, w, limitH) => {
+  const drawLogs = (x, y, w, h) => {
     ctx.save()
     ctx.font =
       '11px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
   
     const lineH = 14
-    const bottomPad = 10
-  
-    // cuántas líneas caben sin invadir la franja reservada (label)
-    const maxLines = Math.max(1, Math.floor((limitH - y - bottomPad) / lineH))
+    const maxLines = Math.max(1, Math.floor(h / lineH))
     const start = Math.max(0, s.logs.length - maxLines)
   
-    for (let i = start; i < s.logs.length; i++) {
-      const row = i - start
-      const a = 0.42 + row * 0.10
-      ctx.fillStyle = `rgba(235,240,255,${a})`
-      ctx.fillText(s.logs[i], x, y + row * lineH)
+    for (let i = 0; i < maxLines; i++) {
+      const idx = start + i
+      const msg = s.logs[idx]
+      if (!msg) continue
+      const a = 0.55 + i * 0.08
+      ctx.fillStyle = `rgba(235,240,255,${Math.min(a, 0.92)})`
+      ctx.fillText(msg, x, y + i * lineH)
     }
   
-    // caret en la última línea visible
-    const blink = Math.sin(t * 5) > 0.2 ? 1 : 0
-    ctx.fillStyle = `rgba(110,207,255,${0.45 * blink})`
-    const lastRow = Math.min(maxLines, s.logs.length) - 1
-    ctx.fillRect(x + w - 10, y + lastRow * lineH - 8, 8, 2)
+    // caret
+    const blink = (Math.sin(t * 5) > 0.2) ? 1 : 0
+    ctx.fillStyle = `rgba(110,207,255,${0.50 * blink})`
+    ctx.fillRect(x + w - 10, y + (Math.min(maxLines, s.logs.length) - 1) * lineH - 8, 8, 2)
   
     ctx.restore()
   }
+  
   
 
   const drawMagneticDot = (w, h) => {
@@ -2068,8 +2067,10 @@ function mountMobileGate() {
   
     drawReadouts(pad, pad + 10)
   
-    // Logs: ahora con límite usableH (así no llegan a la zona del label)
-    drawLogs(pad, pad + 120, leftW - 4)
+// Logs: ahora con límite usableH (no llegan a la zona del label)
+const logsH = Math.max(28, usableH - (pad + 92))
+drawLogs(pad, pad + 92, leftW - 4, logsH)
+
   
     // Magnetic dot puede vivir en todo el canvas (queda bonito incluso cerca del label)
     drawMagneticDot(w, h)
