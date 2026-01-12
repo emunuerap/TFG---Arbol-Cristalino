@@ -2065,11 +2065,17 @@ function mountMobileGate() {
     ctx.strokeRect(waveX + 0.5, waveY + 0.5, waveW, waveH)
     drawWaveform(waveX + 8, waveY + 8, waveW - 16, waveH - 16)
   
-    drawReadouts(pad, pad + 10)
-  
-// Logs: ahora con límite usableH (no llegan a la zona del label)
-const logsH = Math.max(28, usableH - (pad + 92))
-drawLogs(pad, pad + 92, leftW - 4, logsH)
+   // --- Readouts (columna izquierda arriba)
+const READOUTS_Y = pad + 10
+drawReadouts(pad, READOUTS_Y)
+
+// --- Logs: SIEMPRE debajo de los readouts (no se pisan nunca)
+const READOUTS_H = (6 * 16) + 10   // 6 líneas * 16px + margen
+const LOGS_Y = READOUTS_Y + READOUTS_H + 14
+
+const logsH = Math.max(28, usableH - LOGS_Y - pad)
+drawLogs(pad, LOGS_Y, leftW - 4, logsH)
+
 
   
     // Magnetic dot puede vivir en todo el canvas (queda bonito incluso cerca del label)
