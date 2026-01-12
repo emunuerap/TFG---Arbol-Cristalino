@@ -1947,19 +1947,34 @@ function mountMobileGate() {
     ctx.restore()
   }
 
-  const drawLogs = (x, y, w) => {
+  const drawLogs = (x, y, w, limitH) => {
     ctx.save()
-    ctx.font = '11px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
-    for (let i = 0; i < s.logs.length; i++) {
-      const a = 0.42 + i * 0.10
+    ctx.font =
+      '11px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
+  
+    const lineH = 14
+    const bottomPad = 10
+  
+    // cuántas líneas caben sin invadir la franja reservada (label)
+    const maxLines = Math.max(1, Math.floor((limitH - y - bottomPad) / lineH))
+    const start = Math.max(0, s.logs.length - maxLines)
+  
+    for (let i = start; i < s.logs.length; i++) {
+      const row = i - start
+      const a = 0.42 + row * 0.10
       ctx.fillStyle = `rgba(235,240,255,${a})`
-      ctx.fillText(s.logs[i], x, y + i * 14)
+      ctx.fillText(s.logs[i], x, y + row * lineH)
     }
-    const blink = (Math.sin(t * 5) > 0.2) ? 1 : 0
+  
+    // caret en la última línea visible
+    const blink = Math.sin(t * 5) > 0.2 ? 1 : 0
     ctx.fillStyle = `rgba(110,207,255,${0.45 * blink})`
-    ctx.fillRect(x + w - 10, y + (s.logs.length - 1) * 14 - 8, 8, 2)
+    const lastRow = Math.min(maxLines, s.logs.length) - 1
+    ctx.fillRect(x + w - 10, y + lastRow * lineH - 8, 8, 2)
+  
     ctx.restore()
   }
+  
 
   const drawMagneticDot = (w, h) => {
     const now = performance.now()
@@ -2003,62 +2018,71 @@ function mountMobileGate() {
   const draw = () => {
     t += 1 / 60
     tickTelemetry()
-
+  
     const rect = canvas.getBoundingClientRect()
     const w = rect.width
     const h = rect.height
+  
+    // Reservamos una franja inferior para que el badge NO tape logs
+    const LABEL_SAFE_H = 34
+    const usableH = h - LABEL_SAFE_H
+  
     ctx.clearRect(0, 0, w, h)
-    
-
+  
     const bg = ctx.createLinearGradient(0, 0, w, h)
     bg.addColorStop(0, 'rgba(8,14,26,0.95)')
     bg.addColorStop(1, 'rgba(2,6,14,0.98)')
     ctx.fillStyle = bg
     ctx.fillRect(0, 0, w, h)
-
+  
     const halo = ctx.createRadialGradient(w * 0.10, h * 0.15, 10, w * 0.10, h * 0.15, w * 0.9)
     halo.addColorStop(0, 'rgba(110,207,255,0.10)')
     halo.addColorStop(0.5, 'rgba(210,160,255,0.06)')
     halo.addColorStop(1, 'rgba(0,0,0,0)')
     ctx.fillStyle = halo
     ctx.fillRect(0, 0, w, h)
-
-    drawGrid(w, h)
-
+  
+    // IMPORTANTE: grid y layout usan usableH (no invaden zona del label)
+    drawGrid(w, usableH)
+  
     const pad = 12
-    const panelH = h - pad * 2
+    const panelH = usableH - pad * 2
     const leftW = Math.min(150, w * 0.32)
     const rightW = w - pad * 3 - leftW
-
+  
     const barsX = pad * 2 + leftW
     const barsY = pad
     const barsW = rightW
     const barsH = Math.max(50, panelH * 0.33)
-
+  
     drawBars(barsX, barsY, barsW, barsH)
-
+  
     const waveX = barsX
     const waveY = barsY + barsH + 10
     const waveW = barsW
     const waveH = panelH - barsH - 10
-
+  
     ctx.strokeStyle = 'rgba(255,255,255,0.10)'
     ctx.strokeRect(waveX + 0.5, waveY + 0.5, waveW, waveH)
     drawWaveform(waveX + 8, waveY + 8, waveW - 16, waveH - 16)
-
+  
     drawReadouts(pad, pad + 10)
+  
+    // Logs: ahora con límite usableH (así no llegan a la zona del label)
     drawLogs(pad, pad + 120, leftW - 4)
-
+  
+    // Magnetic dot puede vivir en todo el canvas (queda bonito incluso cerca del label)
     drawMagneticDot(w, h)
-
+  
+    // Scanlines solo sobre el área util (para que el label se lea más limpio)
     ctx.globalCompositeOperation = 'overlay'
     ctx.fillStyle = 'rgba(255,255,255,0.02)'
-    for (let y = 0; y < h; y += 3) ctx.fillRect(0, y, w, 1)
+    for (let y = 0; y < usableH; y += 3) ctx.fillRect(0, y, w, 1)
     ctx.globalCompositeOperation = 'source-over'
-
+  
     raf = requestAnimationFrame(draw)
   }
-
+  
 
   raf = requestAnimationFrame(draw)
 
