@@ -2023,7 +2023,7 @@ function mountMobileGate() {
     const h = rect.height
   
     // Reservamos una franja inferior para que el badge NO tape logs
-    const LABEL_SAFE_H = 34
+    const LABEL_SAFE_H = 48
     const usableH = h - LABEL_SAFE_H
   
     ctx.clearRect(0, 0, w, h)
