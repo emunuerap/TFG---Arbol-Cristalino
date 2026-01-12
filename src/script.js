@@ -1706,16 +1706,28 @@ function mountMobileGate() {
   gate.innerHTML = `
     <div class="mobile-gate__card">
       <div class="mobile-gate__top">
-        <div class="mobile-gate__kicker">ÁRBOL CRISTALINO</div>
-        <div class="mobile-gate__badge">Desktop / Tablet</div>
-      </div>
+<div class="mobile-gate__hero" aria-hidden="true">
+  <div class="mobile-gate__heroGlow"></div>
+  <div class="mobile-gate__heroFrame"></div>
+</div>
+
+<div class="mobile-gate__topRow">
+    <div class="mobile-gate__kicker">ÁRBOL CRISTALINO</div>
+    <div class="mobile-gate__badge">Desktop / Tablet</div>
+  </div>
+
 
       <h2 class="mobile-gate__title">Esta experiencia no está disponible en móvil</h2>
 
       <p class="mobile-gate__text">
-        Está diseñada para precisión, scroll fino y rendimiento WebGL.
-        En móvil, los gestos y el frame budget limitan la navegación.
-      </p>
+  Diseñada para precisión, scroll fino y rendimiento WebGL estable.
+</p>
+<ul class="mobile-gate__bullets">
+  <li>Interacción avanzada (HUD + cursores)</li>
+  <li>Shader FX + postprocesado</li>
+  <li>Navegación cinemática por scroll</li>
+</ul>
+
 
       <div class="mobile-gate__divider"></div>
 
