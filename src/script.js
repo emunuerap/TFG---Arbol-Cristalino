@@ -1708,8 +1708,10 @@ function mountMobileGate() {
      <div class="mobile-gate__visual" aria-hidden="true">
   <canvas class="mobile-gate__canvas" width="560" height="220"></canvas>
   <div class="mobile-gate__visualOverlay"></div>
-  <div class="mobile-gate__visualLabel">DATA · SYSTEMS</div>
 </div>
+
+<div class="mobile-gate__visualLabel">DATA · SYSTEMS</div>
+
 
 
 
@@ -1729,6 +1731,11 @@ function mountMobileGate() {
       <p class="mobile-gate__fineprint" data-fineprint>
         Tip: envíate el link por WhatsApp/Telegram/email y ábrelo en el ordenador o en iPad/tablet.
       </p>
+
+      <div class="mobile-gate__footer">
+  Eduardo Porlan · Creative Technologist · Helsinki
+</div>
+
     </div>
   `
 
