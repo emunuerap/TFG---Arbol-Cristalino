@@ -22,8 +22,7 @@ export const RAMAS_PROJECTS = [
       tags: ['PRODUCT DESIGN', 'REAL-TIME', 'B2B/B2C'],
       tech: ['React Native', 'Node.js', 'Socket.io', 'Dashboard OS'],
       links: {
-          'demo': 'tapin-demo.vercel.app',
-          'case': '#'
+          'demo': 'https://tapin-demo.vercel.app/',
       }
   },
   {
@@ -35,7 +34,6 @@ export const RAMAS_PROJECTS = [
       tags: ['DATA SCIENCE', 'E-COMMERCE', 'STRATEGY'],
       tech: ['Python', 'Pandas', 'Scikit-learn', 'PowerBI'],
       links: {
-          'analysis': '#',
           'web': 'https://iberikus.fi',
           'case': 'https://iberikus-rfm-dashboard.onrender.com/'
       }
