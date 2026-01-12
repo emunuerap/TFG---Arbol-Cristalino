@@ -1708,16 +1708,18 @@ function mountMobileGate() {
      <div class="mobile-gate__visual" aria-hidden="true">
   <canvas class="mobile-gate__canvas" width="560" height="220"></canvas>
   <div class="mobile-gate__visualOverlay"></div>
+  <div class="mobile-gate__visualLabel">DATA · SYSTEMS</div>
 </div>
-<div class="mobile-gate__visualLabel">DATA · SYSTEMS</div>
+
 
 
       <h2 class="mobile-gate__title">Esta experiencia no está disponible en móvil</h2>
 
-      <p class="mobile-gate__text">
-        WebGL en tiempo real, scrollytelling y HUD avanzado requieren precisión y un frame budget estable.
-        Ábrelo en ordenador o iPad/tablet para verlo como fue diseñado.
-      </p>
+     <p class="mobile-gate__text">
+  Esta experiencia usa WebGL en tiempo real, scrollytelling y HUD avanzado.
+  Para verla como fue diseñada, ábrela en ordenador o iPad/tablet.
+</p>
+
 
       <div class="mobile-gate__actions">
         <button class="mobile-gate__btn" type="button" data-copy-url>Copiar link</button>
@@ -1765,13 +1767,14 @@ function mountMobileGate() {
   const fit = () => {
     const dpr = Math.min(window.devicePixelRatio || 1, 2)
     const rect = canvas.getBoundingClientRect()
-
+  
     canvas.width = Math.max(1, Math.floor(rect.width * dpr))
     canvas.height = Math.max(1, Math.floor(rect.height * dpr))
-
-    // dibujamos en CSS px
+  
+    // Dibujo en CSS px
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
   }
+  
 
   fit()
   window.addEventListener('resize', fit, { passive: true })
@@ -2004,8 +2007,8 @@ function mountMobileGate() {
     const rect = canvas.getBoundingClientRect()
     const w = rect.width
     const h = rect.height
-
     ctx.clearRect(0, 0, w, h)
+    
 
     const bg = ctx.createLinearGradient(0, 0, w, h)
     bg.addColorStop(0, 'rgba(8,14,26,0.95)')

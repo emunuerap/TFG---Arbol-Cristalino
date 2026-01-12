@@ -3065,13 +3065,19 @@ html.is-mobile-gated body{
 }
 
 .mobile-gate__visualLabel{
+  pointer-events:none;
+  position:absolute;
+  left: 12px;
+  bottom: 10px;
+
   display:inline-flex;
   align-items:center;
   gap:10px;
-  margin: 10px 0 16px;
+
   font-size: 0.68rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
+
   color: rgba(235,240,255,0.70);
   padding: 8px 12px;
   border-radius: 999px;
@@ -3079,7 +3085,9 @@ html.is-mobile-gated body{
   background: rgba(0,0,0,0.22);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
+  margin: 0; /* importante */
 }
+
 .mobile-gate__visualLabel::before{
   content:'';
   width:6px;
