@@ -32,42 +32,19 @@ export default class Intro {
   }
 
   setMouseListeners() {
-    const updatePointer = (clientX, clientY) => {
-      this.pointer.x = (clientX / this.sizes.width) * 2 - 1
-      this.pointer.y = -(clientY / this.sizes.height) * 2 + 1
-    }
-  
-    // Pointer move (mouse + touch)
-    window.addEventListener('pointermove', (e) => {
-      updatePointer(e.clientX, e.clientY)
-    }, { passive: true })
-  
-    // Pointer down
-    window.addEventListener('pointerdown', (e) => {
-      if (this.transitionStarted || !this.assetsLoaded) return
-  
-      updatePointer(e.clientX, e.clientY)
-  
-      // MÓVIL: tap-to-enter (no forzar “hold”)
-      const isTouch = e.pointerType === 'touch'
-      if (isTouch) {
-        this.transitionStarted = true
-        this.experience.trigger('start-transition')
-        this.fadeOut()
-        return
-      }
-  
-      // Desktop: mantener el “hold”   
-      this.isMouseDown = true
-    }, { passive: true })
-  
-    // Pointer up
-    window.addEventListener('pointerup', () => {
-      if (this.transitionStarted || !this.assetsLoaded) return
-      this.isMouseDown = false
-    }, { passive: true })
+    window.addEventListener('mousemove', (e) => {
+        this.pointer.x = (e.clientX / this.sizes.width) * 2 - 1
+        this.pointer.y = -(e.clientY / this.sizes.height) * 2 + 1
+    }, { passive: true });
+    window.addEventListener('mousedown', () => {
+        if (this.transitionStarted || !this.assetsLoaded) return;
+        this.isMouseDown = true;
+    });
+    window.addEventListener('mouseup', () => {
+        if (this.transitionStarted || !this.assetsLoaded) return;
+        this.isMouseDown = false;
+    });
   }
-  
 
   loadAssets() {
     const gltfLoader = new GLTFLoader()

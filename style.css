@@ -83,10 +83,7 @@ body {
 
 body, body * { cursor: none !important; }
 
-@media (pointer: coarse) {
-  body, body * { cursor: auto !important; }
-  .fx-tubes-cursor { display: none; }
-}
+
 
 /* Core reticle (preciso) */
 .cursor-core{
@@ -135,10 +132,7 @@ body, body * { cursor: none !important; }
   opacity: 0.85;
 }
 
-/* móvil */
-@media (pointer: coarse) {
-  .cursor-core{ display:none; }
-}
+
 
 
 
@@ -447,12 +441,7 @@ body.is-intro .experience-canvas {
   margin-top: 4px;
 }
 
-/* Responsive sencillo */
-@media (max-width: 768px) {
-  .ui-container { left: 20px; bottom: 24px; }
-  .section-card { padding: 24px 20px 22px; border-radius: 22px; }
-  .section-grid { grid-template-columns: 1fr; }
-}
+
 
 /* =========================
    CTA: ENTER BUTTON
@@ -856,12 +845,7 @@ body.is-section-immersive .section-exit-button:not(:hover):not(:active) {
   animation: exitButtonFloat 4.5s ease-in-out infinite;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  body.is-section-immersive .section-exit-button {
-    animation: none !important;
-    transform: translate(0, 0) scale(1);
-  }
-}
+
 
 /* Temas por sección */
 body.is-section-immersive.immersive-0 .section-exit-button {
@@ -1157,30 +1141,7 @@ body.is-section-immersive-roots .roots-immersive-hud {
 }
 
 
-/* Responsive roots */
-@media (max-width: 900px) {
-  .roots-immersive-hud { padding: 70px 16px 20px 16px; }
-  .roots-hud-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-  .roots-title { text-align: left; font-size: 1.2rem; }
-  .roots-hud-body {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
-    gap: 20px;
-  }
-  .roots-pill-column {
-    padding-top: 0;
-    flex-direction: row;
-    height: auto;
-    flex-shrink: 0;
-    overflow-x: auto;
-    padding-bottom: 10px;
-    width: 100%;
-  }
-}
+
 
 /* =========================
    ROOTS HUD: CABECERAS INTERNAS
@@ -1374,14 +1335,6 @@ body.is-section-immersive-roots .roots-immersive-hud {
   to { opacity: 1; transform: translateY(0); }
 }
 
-@media (max-width: 820px) {
-  .roots-timeline-track { overflow-x: auto; padding-bottom: 16px; }
-  .roots-timeline-track::-webkit-scrollbar { height: 4px; }
-  .roots-timeline-track::-webkit-scrollbar-thumb {
-    border-radius: 999px;
-    background: rgba(160, 210, 255, 0.6);
-  }
-}
 
 /* =========================
    ROOTS GALERÍA
@@ -2126,9 +2079,7 @@ body.is-section-immersive-roots .roots-immersive-hud {
   font-size: 0.78rem;
 }
 
-@media (max-width: 900px) {
-  .xr-grid { grid-template-columns: minmax(0, 1fr); }
-}
+
 
 /* =========================================================
    DATA SYSTEMS (PRO UI - FIXED)
@@ -2144,9 +2095,7 @@ body.is-section-immersive-roots .roots-immersive-hud {
      align-items: stretch;
    }
    
-   @media (max-width: 980px) {
-     .data-systems .ds-grid { grid-template-columns: 1fr; }
-   }
+   
    
    /* --- REACTOR (IZQUIERDA) --- */
    .data-systems .ds-reactor {
@@ -2415,16 +2364,6 @@ body.is-section-immersive-roots .roots-immersive-hud {
    .data-systems .ds-terminal::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
    .data-systems .ds-terminal::-webkit-scrollbar-track { background: transparent; }
 
-/* =========================
-   MOTION ACCESSIBILITY
-   ========================= */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
 
 /* =========================
    RAMAS · HUD INMERSIVO (VUELO 3D) — CLEAN
@@ -2523,9 +2462,7 @@ body.is-section-immersive-roots .roots-immersive-hud {
     will-change: opacity, filter, transform;
   }
   
-  @media (max-width: 768px){
-    .intro-text{ font-size: 1.2rem; letter-spacing: 0.15em; }
-  }
+
   
   /* Tarjeta info activa */
   .branch-active-info{
@@ -2706,11 +2643,7 @@ body.is-section-immersive-roots .roots-immersive-hud {
   pointer-events: auto;
 }
   
-  /* Responsive */
-  @media (max-width: 900px){
-    .branches-immersive-hud{ padding: 70px 16px 20px 16px; }
-    .branch-active-info{ right: 16px; left: 16px; max-width: none; bottom: 20px; }
-  }
+
   
   /* =========================
    COPA (CROWN) HUD 
@@ -2985,29 +2918,7 @@ body.is-section-immersive-crown .crown-body * {
 @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
-/* Media Query para pantallas chatas */
-@media (max-height: 800px) {
-  .crown-immersive-hud { justify-content: flex-start; /* Si es chata, alineamos arriba para poder scrollear */
-    padding-top: 100px; }
-  .crown-body { gap: 1.5rem; }
-  .crown-lead { font-size: 1.8rem; margin-bottom: 0.5rem; }
-  .crown-sublead { font-size: 0.9rem; }
-  .crown-panel h3 { font-size: 1.2rem; }
-  .crown-actions { margin-bottom: 2rem; }
-}
 
-/* Mobile */
-@media (max-width: 768px) {
-  .crown-lead { font-size: 2rem !important; margin-bottom: 0.5rem; }
-    .crown-immersive-hud { padding: 20px; padding-top: 100px; }
-  .crown-actions { flex-direction: column; gap: 0.8rem; width: 100%; }
-  .crown-action-btn { width: 100%; text-align: center; }
-}
-  
-  /* =========================
-     (Opcional - Global) Pointer-events
-     Si esto afecta a otras secciones, lo movemos a CSS global.
-     ========================= */
   
 /* HIT TESTING CORRECTO */
 .sections-container { pointer-events: auto; }
@@ -3015,91 +2926,123 @@ body.is-section-immersive-crown .crown-body * {
 .section-card.is-active { pointer-events: auto; }
 .section-card.is-active * { pointer-events: auto; }
 
+/* =========================
+   ACCESSIBILITY · REDUCED MOTION
+   ========================= */
+   @media (prefers-reduced-motion: reduce) {
 
-
-/* =========================================================
-   A11Y · MOBILE TARGETS (tap-friendly)
-   ========================================================= */
-
-   @media (pointer: coarse) {
-    /* Regla base para elementos interactivos */
-    button,
-    a,
-    [role="button"] {
-      min-height: 44px;
-      min-width: 44px;
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
     }
   
-    /* CTAs principales */
-    .section-enter-button,
-    .section-exit-button,
-    .mute-btn {
-      min-height: 48px;
-    }
-  
-    /* Pills Roots */
-    .roots-pill {
-      padding: 14px 18px; /* antes 18/24, pero priorizamos tap area */
-      min-height: 48px;
-    }
-  
-    /* Tabs / toggles Crown */
-    .crown-tab-btn,
-    .crown-toggle-btn {
-      min-height: 44px;
-      padding: 10px 16px;
-    }
-  
-    /* XR zones */
-    .xr-zone {
-      min-height: 54px;
-      padding: 14px 14px;
-    }
-  
-    /* DataSystems chips */
-    .ds-chip {
-      min-height: 40px;
-      padding: 10px 14px;
-    }
-  
-    /* Branches CTA buttons */
-    .branch-btn {
-      min-height: 44px;
-      padding: 12px 18px;
-    }
-  
-    /* Evita zoom raro de iOS en inputs pequeños */
-    input,
-    textarea,
-    select {
-      font-size: 16px;
+    .scroll-prompt,
+    .cursor-core,
+    .fx-tubes-cursor {
+      display: none !important;
     }
   }
   
-     /* =========================================================
-   A11Y · REDUCED MOTION (completo)
-   Sustituye tu bloque actual por este
-   ========================================================= */
-@media (prefers-reduced-motion: reduce) {
-  html:focus-within { scroll-behavior: auto; }
-
-  *,
-  *::before,
-  *::after {
-    animation: none !important;
-    transition: none !important;
-  }
-
-  /* Quita decoraciones que no aportan en reduce motion */
-  .fx-tubes-cursor,
-  .cursor-core {
-    display: none !important;
-  }
-
-  /* Scroll prompt sin animación */
-  .scroll-prompt-dot {
-    animation: none !important;
-  }
+  /* =========================
+   MOBILE GATE (Desktop/Tablet only)
+   ========================= */
+.mobile-gate{
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(90,170,255,0.14), transparent 55%),
+    radial-gradient(circle at 82% 88%, rgba(220,180,255,0.10), transparent 55%),
+    rgba(0,0,0,0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
+
+html.is-mobile-gated .mobile-gate{
+  isolation: isolate;
+}
+
+
+.mobile-gate__card{
+  width: min(560px, 92vw);
+  border-radius: 22px;
+  padding: 26px 24px 22px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(255,255,255,0.07), transparent 60%),
+    linear-gradient(140deg, rgba(6,14,26,0.94), rgba(2,6,14,0.96));
+  box-shadow:
+    0 30px 90px rgba(0,0,0,0.78),
+    0 0 60px rgba(90,180,255,0.18);
+  color: rgba(246,247,255,0.92);
+}
+
+.mobile-gate__kicker{
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(167,217,255,0.92);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.mobile-gate__kicker::before{
+  content:'';
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #6ecfff;
+  box-shadow: 0 0 12px rgba(110,207,255,0.9);
+}
+
+.mobile-gate__title{
+  font-size: 1.4rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  margin: 0 0 10px 0;
+}
+
+.mobile-gate__text{
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: rgba(235,240,255,0.82);
+  margin: 0 0 10px 0;
+}
+.mobile-gate__text:last-child{ margin-bottom: 0; }
+
+
+/* --- HARD STOP cuando hay MOBILE GATE --- */
+html.is-mobile-gated,
+html.is-mobile-gated body{
+  overflow: hidden !important;
+  height: 100vh !important;
+}
+
+/* Oculta TODO lo “caro”/interactivo para evitar flashes */
+html.is-mobile-gated #scroll-spacer,
+html.is-mobile-gated .experience-canvas,
+html.is-mobile-gated .custom-scrollbar,
+html.is-mobile-gated .scroll-prompt,
+html.is-mobile-gated .sections-container,
+html.is-mobile-gated .roots-immersive-hud,
+html.is-mobile-gated .branches-immersive-hud,
+html.is-mobile-gated .crown-immersive-hud,
+html.is-mobile-gated .ui-container,
+html.is-mobile-gated #mute-btn,
+html.is-mobile-gated #section-exit-btn,
+html.is-mobile-gated #tooltip,
+html.is-mobile-gated .fx-tubes-cursor{
+  display: none !important;
+}
+
+
 
     

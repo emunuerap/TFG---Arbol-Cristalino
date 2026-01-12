@@ -4,8 +4,6 @@
 // ------------------------------------------------------------
 
 import * as THREE from 'three'
-import { initA11yController } from './a11yController.js';
-import { lockScrollBleed } from './scrollBleedLock.js'
 import Experience from './Experience/Experience.js'
 
 // XR (Raíces · Interacción)
@@ -1518,57 +1516,40 @@ function bindScrollProgress() {
 // ------------------------------------------------------------
 
 function bindUIEvents() {
-  const pickButtonFromEvent = (event) => {
-    // Coordenadas fiables (touch/pointer)
-    const clientX = event.changedTouches?.[0]?.clientX ?? event.clientX
-    const clientY = event.changedTouches?.[0]?.clientY ?? event.clientY
-    if (clientX == null || clientY == null) return null
+  // Enter buttons (un solo listener, capture, sin duplicados)
+  document.addEventListener(
+    'click',
+    (event) => {
+      const btn = event.target.closest('.section-enter-button')
+      if (!btn) return
+      event.preventDefault()
+      event.stopImmediatePropagation()
 
-    // Elemento REAL bajo el dedo
-    const el = document.elementFromPoint(clientX, clientY)
-    if (!el) return null
+      const raw = btn.dataset.section
+      const sectionIndex = Number(raw)
+      if (!Number.isFinite(sectionIndex)) {
+        console.warn('[ENTER BTN] data-section inválido', raw, btn)
+        return
+      }
+      enterImmersiveSection(sectionIndex, 'ui')
+    },
+    true
+  )
 
-    // Buscamos el botón desde ese elemento real
-    return el.closest?.('.section-enter-button') || null
-  }
-
-  const handleEnter = (event) => {
-    const btn = pickButtonFromEvent(event)
-    if (!btn) return
-
-    event.preventDefault?.()
-    event.stopPropagation?.()
-    event.stopImmediatePropagation?.()
-
-    const sectionIndex = Number(btn.dataset.section)
-    if (!Number.isFinite(sectionIndex)) {
-      console.warn('[ENTER BTN] data-section inválido:', btn.dataset.section)
-      return
-    }
-
-    console.log('[ENTER BTN] section:', sectionIndex)
-    enterImmersiveSection(sectionIndex, 'ui')
-  }
-
-  // Pointer Events (iOS/Android moderno) - muy fiable
-document.addEventListener('pointerup', handleEnter, { capture: true })
-
-  // Móvil: touchend es el más fiable
-  document.addEventListener('touchend', handleEnter, { capture: true, passive: false })
-  // Desktop fallback
-  document.addEventListener('click', (e) => {
-    const btn = e.target.closest?.('.section-enter-button')
-    if (!btn) return
-    e.preventDefault()
-    e.stopImmediatePropagation()
-    const sectionIndex = Number(btn.dataset.section)
-    if (!Number.isFinite(sectionIndex)) return
-    enterImmersiveSection(sectionIndex, 'ui')
-  }, true)
-
+  // Exit button
   if (ui.exitBtn) ui.exitBtn.addEventListener('click', exitImmersiveSection)
-}
 
+  // Resize thumb
+  window.addEventListener(
+    'resize',
+    () => {
+      if (!experience || experience.state !== 'main') return
+      const t = experience.camera?.computeT?.()
+      if (typeof t === 'number') updateScrollbarThumb(t)
+    },
+    { passive: true }
+  )
+}
 
 // ------------------------------------------------------------
 // 15) Audio mute (con fade)
@@ -1674,26 +1655,79 @@ function bindCleanup() {
 // 17) Boot
 // ------------------------------------------------------------
 
-window.addEventListener('DOMContentLoaded', async () => {
-  bindUIRefs()
+// ------------------------------------------------------------
+// MOBILE GATE (Phones only — allow tablets)
+// ------------------------------------------------------------
 
-    // 3B) Reduced motion flag 
-    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
-    if (reduceMotion) document.body.classList.add('reduce-motion')
-  
-    // A11Y controller
-    initA11yController()
-    
-  // Crown toggles (modo oscuro / claro)
+function isPhoneDevice() {
+  const ua = navigator.userAgent || ''
+  const platform = navigator.platform || ''
+  const maxTouchPoints = navigator.maxTouchPoints || 0
+
+  // iPadOS a veces se presenta como "MacIntel" + touch
+  const isIPad =
+    /iPad/i.test(ua) ||
+    (platform === 'MacIntel' && maxTouchPoints > 1)
+
+  if (isIPad) return false
+
+  const isIPhone = /iPhone|iPod/i.test(ua)
+  const isAndroid = /Android/i.test(ua)
+
+  // Android phone suele llevar "Mobile"
+  const isAndroidPhone = isAndroid && /Mobile/i.test(ua)
+
+  // Heurística por input + tamaño (para UAs raros)
+  const coarse = window.matchMedia?.('(pointer: coarse)')?.matches ?? false
+  const minSide = Math.min(window.innerWidth, window.innerHeight)
+  const phoneBySize = coarse && minSide <= 760
+
+  return isIPhone || isAndroidPhone || phoneBySize
+}
+
+function mountMobileGate() {
+  // Evita duplicar
+  if (document.querySelector('.mobile-gate')) return
+
+  document.documentElement.classList.add('is-mobile-gated')
+  document.body.classList.add('is-mobile-gated')
+
+  const gate = document.createElement('div')
+  gate.className = 'mobile-gate'
+  gate.setAttribute('role', 'dialog')
+  gate.setAttribute('aria-modal', 'true')
+  gate.setAttribute('aria-label', 'Desktop / Tablet experience')
+
+  gate.innerHTML = `
+    <div class="mobile-gate__card">
+      <div class="mobile-gate__kicker">ÁRBOL CRISTALINO</div>
+      <h2 class="mobile-gate__title">Desktop / Tablet Experience</h2>
+      <p class="mobile-gate__text">
+        Esta experiencia está optimizada para ordenador o tablet.
+        En móvil, el navegador limita gestos, precisión y rendimiento.
+      </p>
+      <p class="mobile-gate__text">
+        Abre este enlace en un portátil o en iPad/Tablet.
+        En iPhone puedes probar “Solicitar sitio de escritorio”, pero no está garantizado.
+      </p>
+    </div>
+  `
+
+  document.body.appendChild(gate)
+}
+
+
+
+window.addEventListener('DOMContentLoaded', async () => {
+  // HARD STOP en móvil (y también si el <head> ya marcó la clase)
+  if (document.documentElement.classList.contains('is-mobile-gated') || isPhoneDevice()) {
+    mountMobileGate()
+    return
+  }
+
+  bindUIRefs()
   initCrownToggles()
 
-  const rootsScrollEls = document.querySelectorAll('.roots-detail-scroll')
-  rootsScrollEls.forEach((el) => lockScrollBleed(el))
-
-  const crownHud = document.querySelector('.crown-immersive-hud')
-  lockScrollBleed(crownHud)
-
-  // aseguramos que la UI arranca oculta (por si el CSS no la deja oculta)
   if (ui.mainUI) {
     ui.mainUI.classList.add('is-hidden')
     ui.mainUI.classList.remove('is-visible')
@@ -1706,22 +1740,18 @@ window.addEventListener('DOMContentLoaded', async () => {
   canShowScrollPrompt = false
   if (ui.scrollPrompt) ui.scrollPrompt.classList.add('hidden')
 
-  // deja el mute “soft” en intro (pero presente)
-
   initExperience()
 
-  // HUD modules
   initRootsHUD()
   initBranchesHUD()
   initCrownHUD()
   initXRZonesClickUI()
 
-  // UI + scroll binding
   bindUIEvents()
   bindScrollProgress()
   bindAudioMute()
   bindCleanup()
 
-  // cursors
   await initCursors()
 })
+
