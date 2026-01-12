@@ -3051,7 +3051,7 @@ html.is-mobile-gated body{
 .mobile-gate__canvas{
   display:block;
   width: 100%;
-  height: 150px;
+  height: 170px;
 }
 
 .mobile-gate__visualOverlay{
