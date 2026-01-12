@@ -1705,11 +1705,12 @@ function mountMobileGate() {
         <div class="mobile-gate__badge">Desktop / Tablet</div>
       </div>
 
-      <div class="mobile-gate__visual" aria-hidden="true">
-        <canvas class="mobile-gate__canvas"></canvas>
-        <div class="mobile-gate__visualOverlay"></div>
-        <div class="mobile-gate__visualLabel">DATA · SYSTEMS</div>
-      </div>
+     <div class="mobile-gate__visual" aria-hidden="true">
+  <canvas class="mobile-gate__canvas" width="560" height="220"></canvas>
+  <div class="mobile-gate__visualOverlay"></div>
+</div>
+<div class="mobile-gate__visualLabel">DATA · SYSTEMS</div>
+
 
       <h2 class="mobile-gate__title">Esta experiencia no está disponible en móvil</h2>
 
@@ -2054,6 +2055,7 @@ function mountMobileGate() {
 
     raf = requestAnimationFrame(draw)
   }
+
 
   raf = requestAnimationFrame(draw)
 

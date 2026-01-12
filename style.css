@@ -2972,7 +2972,7 @@ html.is-mobile-gated .mobile-gate{
 .mobile-gate__card{
   width: min(560px, 92vw);
   border-radius: 22px;
-  padding: 22px 22px 18px;
+  padding: 22px 22px 20px;
   border: 1px solid rgba(255,255,255,0.14);
   background:
     radial-gradient(circle at 0% 0%, rgba(255,255,255,0.07), transparent 60%),
@@ -3039,7 +3039,7 @@ html.is-mobile-gated body{
   border-radius: 18px;
   border: 1px solid rgba(255,255,255,0.12);
   overflow: hidden;
-  margin: 0 0 14px;
+  margin: 0 0 12px;
   background: rgba(0,0,0,0.22);
   box-shadow:
     inset 0 0 0 1px rgba(255,255,255,0.06),
@@ -3051,7 +3051,7 @@ html.is-mobile-gated body{
 .mobile-gate__canvas{
   display:block;
   width: 100%;
-  height: 170px;
+  height: 150px;
 }
 
 .mobile-gate__visualOverlay{
@@ -3065,37 +3065,47 @@ html.is-mobile-gated body{
 }
 
 .mobile-gate__visualLabel{
-  pointer-events:none;
-  position:absolute;
-  left: 12px;
-  bottom: 10px;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  margin: 10px 0 16px;
   font-size: 0.68rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: rgba(235,240,255,0.66);
-  padding: 6px 10px;
+  color: rgba(235,240,255,0.70);
+  padding: 8px 12px;
   border-radius: 999px;
   border: 1px solid rgba(255,255,255,0.10);
   background: rgba(0,0,0,0.22);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
 }
+.mobile-gate__visualLabel::before{
+  content:'';
+  width:6px;
+  height:6px;
+  border-radius:999px;
+  background:#6ecfff;
+  box-shadow:0 0 12px rgba(110,207,255,0.8);
+}
+
 
 /* =========================
    TEXT
    ========================= */
 .mobile-gate__title{
-  font-size: 1.22rem;
+  font-size: 1.25rem;
   font-weight: 420;
   letter-spacing: 0.02em;
-  margin: 0 0 8px 0;
+  line-height: 1.15;
+  margin: 0 0 10px 0;
 }
 
 .mobile-gate__text{
   font-size: 0.92rem;
-  line-height: 1.65;
-  color: rgba(235,240,255,0.82);
-  margin: 0 0 12px 0;
+  line-height: 1.55;
+  color: rgba(235,240,255,0.78);
+  margin: 0 0 14px 0;
 }
 
 /* =========================
@@ -3105,7 +3115,7 @@ html.is-mobile-gated body{
   display:flex;
   gap:10px;
   flex-wrap: wrap;
-  margin-top: 12px;
+  margin-top: 10px;
 }
 
 .mobile-gate__btn{
