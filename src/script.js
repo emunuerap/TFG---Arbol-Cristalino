@@ -1664,29 +1664,34 @@ function isPhoneDevice() {
   const platform = navigator.platform || ''
   const maxTouchPoints = navigator.maxTouchPoints || 0
 
-  // iPadOS a veces se presenta como "MacIntel" + touch
+  const w = window.innerWidth
+  const h = window.innerHeight
+  const minSide = Math.min(w, h)
+
+  const coarse = window.matchMedia?.('(pointer: coarse)')?.matches ?? false
+  const hasTouch = maxTouchPoints > 0
+
+  // iPadOS: a veces se presenta como "MacIntel" + touch
   const isIPad =
     /iPad/i.test(ua) ||
-    (platform === 'MacIntel' && maxTouchPoints > 1)
+    (platform === 'MacIntel' && hasTouch)
 
+  //  Permitimos iPad siempre
   if (isIPad) return false
 
+  // Phones por UA 
   const isIPhone = /iPhone|iPod/i.test(ua)
-  const isAndroid = /Android/i.test(ua)
+  const isAndroidPhone = /Android/i.test(ua) && /Mobile/i.test(ua)
 
-  // Android phone suele llevar "Mobile"
-  const isAndroidPhone = isAndroid && /Mobile/i.test(ua)
-
-  // Heurística por input + tamaño (para UAs raros)
-  const coarse = window.matchMedia?.('(pointer: coarse)')?.matches ?? false
-  const minSide = Math.min(window.innerWidth, window.innerHeight)
-  const phoneBySize = coarse && minSide <= 760
+  // Heurística por tamaño + input (para UAs raros)
+  // 740 suele separar bien "phone" vs "tablet" (incl. tablets pequeñas en portrait).
+  const phoneBySize = hasTouch && coarse && minSide <= 740
 
   return isIPhone || isAndroidPhone || phoneBySize
 }
 
+
 function mountMobileGate() {
-  // Evita duplicar
   if (document.querySelector('.mobile-gate')) return
 
   document.documentElement.classList.add('is-mobile-gated')
@@ -1700,21 +1705,56 @@ function mountMobileGate() {
 
   gate.innerHTML = `
     <div class="mobile-gate__card">
-      <div class="mobile-gate__kicker">ÁRBOL CRISTALINO</div>
-      <h2 class="mobile-gate__title">Desktop / Tablet Experience</h2>
+      <div class="mobile-gate__top">
+        <div class="mobile-gate__kicker">ÁRBOL CRISTALINO</div>
+        <div class="mobile-gate__badge">Desktop / Tablet</div>
+      </div>
+
+      <h2 class="mobile-gate__title">Esta experiencia no está disponible en móvil</h2>
+
       <p class="mobile-gate__text">
-        Esta experiencia está optimizada para ordenador o tablet.
-        En móvil, el navegador limita gestos, precisión y rendimiento.
+        Está diseñada para precisión, scroll fino y rendimiento WebGL.
+        En móvil, los gestos y el frame budget limitan la navegación.
       </p>
-      <p class="mobile-gate__text">
-        Abre este enlace en un portátil o en iPad/Tablet.
-        En iPhone puedes probar “Solicitar sitio de escritorio”, pero no está garantizado.
+
+      <div class="mobile-gate__divider"></div>
+
+      <p class="mobile-gate__hint">
+        Abre este mismo link en un ordenador o en iPad/tablet.
+      </p>
+
+      <div class="mobile-gate__actions">
+        <button class="mobile-gate__btn" type="button" data-copy-url>Copiar link</button>
+        <button class="mobile-gate__btn mobile-gate__btn--ghost" type="button" data-how>Cómo abrirlo</button>
+      </div>
+
+      <p class="mobile-gate__fineprint" data-fineprint>
+        Tip: envíate el link por WhatsApp/Telegram/email y ábrelo en el ordenador.
       </p>
     </div>
   `
 
   document.body.appendChild(gate)
+
+  const copyBtn = gate.querySelector('[data-copy-url]')
+  const howBtn = gate.querySelector('[data-how]')
+  const fineprint = gate.querySelector('[data-fineprint]')
+
+  copyBtn?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href)
+      copyBtn.textContent = 'Copiado ✓'
+      setTimeout(() => (copyBtn.textContent = 'Copiar link'), 1400)
+    } catch {
+      prompt('Copia este link:', window.location.href)
+    }
+  })
+
+  howBtn?.addEventListener('click', () => {
+    fineprint?.classList.toggle('is-open')
+  })
 }
+
 
 
 
