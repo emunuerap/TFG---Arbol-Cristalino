@@ -1704,47 +1704,34 @@ function mountMobileGate() {
   gate.setAttribute('aria-label', 'Desktop / Tablet experience')
 
   gate.innerHTML = `
-    <div class="mobile-gate__card">
-      <div class="mobile-gate__top">
-<div class="mobile-gate__hero" aria-hidden="true">
-  <div class="mobile-gate__heroGlow"></div>
-  <div class="mobile-gate__heroFrame"></div>
-</div>
-
-<div class="mobile-gate__topRow">
-    <div class="mobile-gate__kicker">ÁRBOL CRISTALINO</div>
-    <div class="mobile-gate__badge">Desktop / Tablet</div>
-  </div>
-
-
-      <h2 class="mobile-gate__title">Esta experiencia no está disponible en móvil</h2>
-
-      <p class="mobile-gate__text">
-  Diseñada para precisión, scroll fino y rendimiento WebGL estable.
-</p>
-<ul class="mobile-gate__bullets">
-  <li>Interacción avanzada (HUD + cursores)</li>
-  <li>Shader FX + postprocesado</li>
-  <li>Navegación cinemática por scroll</li>
-</ul>
-
-
-      <div class="mobile-gate__divider"></div>
-
-      <p class="mobile-gate__hint">
-        Abre este mismo link en un ordenador o en iPad/tablet.
-      </p>
-
-      <div class="mobile-gate__actions">
-        <button class="mobile-gate__btn" type="button" data-copy-url>Copiar link</button>
-        <button class="mobile-gate__btn mobile-gate__btn--ghost" type="button" data-how>Cómo abrirlo</button>
-      </div>
-
-      <p class="mobile-gate__fineprint" data-fineprint>
-        Tip: envíate el link por WhatsApp/Telegram/email y ábrelo en el ordenador.
-      </p>
+  <div class="mobile-gate__card">
+    <div class="mobile-gate__header">
+      <div class="mobile-gate__kicker">ÁRBOL CRISTALINO</div>
+      <div class="mobile-gate__badge">Desktop / Tablet</div>
     </div>
-  `
+
+    <div class="mobile-gate__visual" aria-hidden="true">
+      <canvas class="mobile-gate__canvas" width="560" height="220"></canvas>
+      <div class="mobile-gate__visualOverlay"></div>
+    </div>
+
+    <h2 class="mobile-gate__title">No disponible en móvil</h2>
+
+    <p class="mobile-gate__text">
+      Esta experiencia es 3D en tiempo real (WebGL) y está optimizada para precisión y rendimiento estable.
+    </p>
+
+    <div class="mobile-gate__actions">
+      <button class="mobile-gate__btn" type="button" data-copy-url>Copiar link</button>
+      <button class="mobile-gate__btn mobile-gate__btn--ghost" type="button" data-how>Cómo abrirlo</button>
+    </div>
+
+    <p class="mobile-gate__fineprint" data-fineprint>
+      Tip: envíate el link por WhatsApp/Telegram/email y ábrelo en el ordenador o en iPad/tablet.
+    </p>
+  </div>
+`
+
 
   document.body.appendChild(gate)
 
@@ -1765,6 +1752,111 @@ function mountMobileGate() {
   howBtn?.addEventListener('click', () => {
     fineprint?.classList.toggle('is-open')
   })
+
+// ------------------------------------------------------------
+// MINI VISUAL (Canvas 2D) — “WebGL-like” aura
+// Ultra ligero: no Three.js, no assets, no dependencias.
+// ------------------------------------------------------------
+const canvas = gate.querySelector('.mobile-gate__canvas')
+const ctx = canvas?.getContext('2d', { alpha: true })
+
+if (canvas && ctx) {
+  // Ajuste a tamaño real en CSS (HiDPI)
+  const fit = () => {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    const rect = canvas.getBoundingClientRect()
+    canvas.width = Math.max(1, Math.floor(rect.width * dpr))
+    canvas.height = Math.max(1, Math.floor(rect.height * dpr))
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+  }
+
+  fit()
+  window.addEventListener('resize', fit, { passive: true })
+
+  let t = 0
+  let raf = 0
+
+  const rand = (x) => {
+    // hash simple determinista
+    const s = Math.sin(x) * 10000
+    return s - Math.floor(s)
+  }
+
+  const draw = () => {
+    t += 1 / 60
+    const w = canvas.clientWidth
+    const h = canvas.clientHeight
+
+    ctx.clearRect(0, 0, w, h)
+
+    // fondo: gradiente profundo
+    const g = ctx.createLinearGradient(0, 0, w, h)
+    g.addColorStop(0, 'rgba(10,18,32,0.92)')
+    g.addColorStop(1, 'rgba(2,6,14,0.96)')
+    ctx.fillStyle = g
+    ctx.fillRect(0, 0, w, h)
+
+    // halo central “Copa”
+    const cx = w * 0.58
+    const cy = h * 0.48
+    const r0 = Math.min(w, h) * 0.10
+    const r1 = Math.min(w, h) * 0.55
+    const halo = ctx.createRadialGradient(cx, cy, r0, cx, cy, r1)
+    halo.addColorStop(0, 'rgba(110,207,255,0.22)')
+    halo.addColorStop(0.35, 'rgba(210,160,255,0.12)')
+    halo.addColorStop(1, 'rgba(0,0,0,0)')
+    ctx.fillStyle = halo
+    ctx.fillRect(0, 0, w, h)
+
+    // “strands” (líneas suaves tipo shader)
+    ctx.globalCompositeOperation = 'lighter'
+    ctx.lineWidth = 1
+    for (let i = 0; i < 26; i++) {
+      const phase = i * 0.22 + t * 0.7
+      const amp = 10 + i * 0.25
+      const y0 = h * 0.20 + i * (h * 0.024)
+      ctx.beginPath()
+      for (let x = 0; x <= w; x += 14) {
+        const n = Math.sin((x * 0.008) + phase) * amp
+        const n2 = Math.cos((x * 0.013) - phase * 1.1) * (amp * 0.35)
+        const y = y0 + n + n2
+        if (x === 0) ctx.moveTo(x, y)
+        else ctx.lineTo(x, y)
+      }
+      const a = 0.06 + i * 0.002
+      ctx.strokeStyle = `rgba(110,207,255,${a})`
+      ctx.stroke()
+    }
+
+    // scanlines muy sutiles
+    ctx.globalCompositeOperation = 'overlay'
+    ctx.fillStyle = 'rgba(255,255,255,0.03)'
+    for (let y = 0; y < h; y += 3) ctx.fillRect(0, y, w, 1)
+
+    // grano sutil animado (barato)
+    ctx.globalCompositeOperation = 'soft-light'
+    const dots = 160
+    for (let i = 0; i < dots; i++) {
+      const x = rand(i * 12.3 + t * 3.1) * w
+      const y = rand(i * 77.7 + t * 2.2) * h
+      ctx.fillStyle = 'rgba(255,255,255,0.025)'
+      ctx.fillRect(x, y, 1, 1)
+    }
+
+    ctx.globalCompositeOperation = 'source-over'
+    raf = requestAnimationFrame(draw)
+  }
+
+  raf = requestAnimationFrame(draw)
+
+  // cleanup 
+  gate._mgStop = () => {
+    cancelAnimationFrame(raf)
+    window.removeEventListener('resize', fit)
+  }
+}
+
+
 }
 
 
